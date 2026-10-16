@@ -133,6 +133,54 @@ class GitHub(unittest.TestCase):
         self.assertEqual(bash("python3 -m unittest discover -s Agents/tests"), "allow")
 
 
+
+class ApprovalLabel(unittest.TestCase):
+    """Sessions act under the owner's account, so they must never add `owner-approved`."""
+
+    def test_pr_edit_add_label_denied(self):
+        self.assertEqual(bash("gh pr edit 34 --add-label owner-approved"), "deny")
+
+    def test_add_label_forms_denied(self):
+        for cmd in ("gh pr edit 34 --add-label=owner-approved",
+                    "gh pr edit 34 --add-label 'zone:red,Owner-Approved'",
+                    'gh pr edit 34 --add-label "owner-approved"',
+                    "gh issue edit 34 --add-label owner-approved",
+                    "gh pr create --title x --body y --label owner-approved",
+                    "gh pr create -l owner-approved -t x -b y",
+                    "gh pr create -lowner-approved -t x -b y",
+                    "git status && gh pr edit 34 --add-label owner-approved"):
+            self.assertEqual(bash(cmd), "deny", cmd)
+
+    def test_label_mutations_denied(self):
+        self.assertEqual(bash("gh label create owner-approved"), "deny")
+        self.assertEqual(bash("gh label edit foo --name owner-approved"), "deny")
+        self.assertEqual(bash("gh label delete owner-approved --yes"), "deny")
+
+    def test_other_labels_and_removal_allowed(self):
+        self.assertEqual(bash("gh pr edit 34 --add-label zone:red"), "allow")
+        self.assertEqual(bash("gh pr edit 34 --remove-label owner-approved"), "allow")
+        self.assertEqual(bash("gh pr list --label owner-approved"), "allow")
+        self.assertEqual(bash("gh label list"), "allow")
+
+    def test_api_label_write_denied(self):
+        self.assertEqual(bash(
+            "gh api -X POST repos/o/r/issues/34/labels -f 'labels[]=owner-approved'"), "deny")
+
+    def test_mcp_label_writes_denied(self):
+        self.assertEqual(mcp("issue_write", method="update", issue_number=34,
+                             labels=["zone:red", "owner-approved"]), "deny")
+        self.assertEqual(mcp("update_pull_request", pullNumber=34,
+                             labels=["OWNER-APPROVED"]), "deny")
+        self.assertEqual(mcp("add_labels", issue_number=34, labels=["owner-approved"]), "deny")
+        self.assertEqual(guard.decide({"tool_name": "mcp__github__label_write", "tool_input": {
+            "method": "create", "name": "owner-approved"}}, ctx())[0], "deny")
+
+    def test_mcp_reads_and_other_labels_allowed(self):
+        self.assertEqual(mcp("search_issues", query="label:owner-approved"), "allow")
+        self.assertEqual(mcp("list_issues", labels=["owner-approved"]), "allow")
+        self.assertEqual(mcp("issue_write", method="update", issue_number=34,
+                             labels=["zone:red"]), "allow")
+
 class Collaborator(unittest.TestCase):
     def test_local_file_wins_and_owner_identity_then_denied(self):
         import json, subprocess, tempfile
