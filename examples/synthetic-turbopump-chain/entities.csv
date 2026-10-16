@@ -1,0 +1,24 @@
+entity_id,name,type,country,fictional
+A01,Sample turbopump-class assembly,assembly,n/a,true
+C01,Rotating assembly forging,component,n/a,true
+C02,Cast housing,component,n/a,true
+C03,Bearing set,component,n/a,true
+C04,Dynamic seal,component,n/a,true
+C05,Fastener and fitting kit,component,n/a,true
+C06,Instrumentation sensor set,component,n/a,true
+M01,Specialty metal stock,material,n/a,true
+V01,Heat-treatment service,service,n/a,true
+V02,Precision machining service,service,n/a,true
+V03,Non-destructive inspection service,service,n/a,true
+S01,Alder Forge,supplier,CA,true
+S02,Brightwater Castings,supplier,CA,true
+S03,Calder Bearings,supplier,DE,true
+S04,Dunmore Seals,supplier,US,true
+S05,Eastlake Fasteners,supplier,CA,true
+S06,Fenwick Sensors,supplier,JP,true
+S07,Garnet Thermal Services,supplier,CA,true
+S08,Halden Precision,supplier,CA,true
+S09,Ironbark Inspection,supplier,CA,true
+S10,Juniper Metals,supplier,US,true
+S11,Kestrel Metals,supplier,FR,true
+S12,Larkspur Distribution,supplier,GB,true

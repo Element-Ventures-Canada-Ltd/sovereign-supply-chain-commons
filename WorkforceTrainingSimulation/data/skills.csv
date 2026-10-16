@@ -1,0 +1,15 @@
+skill_id,name,domain,skill_type,decay_form,parameter_status,cell_id,secondary_cell_ids,notes
+SK-01,Shoulder dystocia management,obstetric,psychomotor-team,exponential,held,SOV-M9,MOD-M9,
+SK-02,Postpartum hemorrhage management,obstetric,psychomotor-team,exponential,held,SOV-M9,MOD-M9,
+SK-03,Adult CPR and basic life support,resuscitation,psychomotor,exponential,held,SOV-M9,MOD-M9,
+SK-04,Hemorrhage control (trauma),trauma,psychomotor,exponential,held,SOV-M9,MOD-M9,No retention evidence recorded yet.
+SK-05,Airway management,resuscitation,psychomotor,exponential,held,SOV-M9,MOD-M9,No retention evidence recorded yet.
+SK-06,Triage assessment,trauma,cognitive,exponential,held,SOV-M9,MOD-M9,No retention evidence recorded yet.
+SK-07,Static-fire procedure execution (go/no-go and abort),propulsion test,procedural,exponential,open,SOV-M9,SOV-M7,
+SK-08,"Propellant loading, offload and remote abort",propulsion test,procedural,exponential,open,SOV-M9,SOV-M7,
+SK-09,Pressure-vessel proof testing before hot fire,propulsion test,procedural,exponential,open,SOV-M9,SOV-M7,
+SK-10,Test-site hazard analysis and clear-zone setting,propulsion test,cognitive,exponential,open,SOV-M9,SOV-M7,
+SK-11,Data acquisition setup and sensor calibration,propulsion test,procedural,exponential,open,SOV-M9,SOV-M7,
+SK-12,Range safety oversight,propulsion test,cognitive,exponential,open,SOV-M9,SOV-M7,
+SK-13,Non-destructive testing method execution,propulsion test,psychomotor,exponential,open,SOV-M9,SOV-M7,
+SK-14,Cleanroom and flight-hardware handling,propulsion test,procedural,exponential,open,SOV-M9,SOV-M7,

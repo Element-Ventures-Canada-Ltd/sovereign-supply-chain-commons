@@ -1,0 +1,27 @@
+# Handling: Unclassified — working
+# Red-zone map. Owned by @TLS-sys = RED (needs TRM approval). No owner = GREEN (auto-merges on green checks).
+# Last matching line wins. Default red; named areas green; sensitive files back to red.
+
+*                                   @TLS-sys
+
+/Dashboard/
+/Engagement/
+/Survey/
+/examples/
+/modules/turbopump-marketplace/
+
+/Dashboard/openchokepoint.pin       @TLS-sys
+**/requirements*.txt                @TLS-sys
+**/pyproject.toml                   @TLS-sys
+**/package.json                     @TLS-sys
+**/package-lock.json                @TLS-sys
+/Survey/data-feeds/                 @TLS-sys
+/modules/turbopump-marketplace/data/ @TLS-sys
+/Survey/CONSENT.md                  @TLS-sys
+/Survey/GOVERNANCE.md               @TLS-sys
+**/manifest*.yaml                   @TLS-sys
+**/manifest*.yml                    @TLS-sys
+/.github/                           @TLS-sys
+/Agents/                            @TLS-sys
+/CLAUDE.md                          @TLS-sys
+**/CLAUDE.md                        @TLS-sys

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Element-Ventures-Canada-Ltd/sovereign-supply-chain-commons/WorkforceTrainingSimulation/schema/parameter_record.schema.json",
+  "title": "Parameter record (workforce)",
+  "description": "Format for one calibrated workforce parameter in the private registry. This file is the public interface: anyone can build a tool that reads or writes this format. Parameter values themselves are held in the private registry and are not published in this repository. Handling: Unclassified — working.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "parameter_id", "entity_type", "entity_id", "name", "value", "unit",
+    "citability_tier", "uncited", "confidence", "jurisdiction",
+    "evidence", "visibility", "scrub_flag", "red_team_status", "date_retrieved"
+  ],
+  "properties": {
+    "parameter_id": {
+      "type": "string",
+      "pattern": "^WF-(DEC|TER|THR|TTC|CUR|INS|LAB|CRT|CST)-[0-9]{2}$",
+      "description": "Immutable id. Class codes: DEC decay, TER simulator transfer, THR proficiency threshold, TTC time to competency, CUR re-currency, INS instructor ratio, LAB labour market, CRT certification, CST cost."
+    },
+    "entity_type": {
+      "enum": ["skill", "role", "program", "facility", "equipment", "credential", "mission"],
+      "description": "Which public table the parameter attaches to."
+    },
+    "entity_id": {
+      "type": "string",
+      "pattern": "^(SK|RL|PG|FA|EQ|EE|DRM|SYN-[A-Z]{2})-?[0-9]{2}$",
+      "description": "Foreign key to the public record (e.g. SK-07)."
+    },
+    "name": { "type": "string", "minLength": 3 },
+    "value": {
+      "type": ["number", "string", "null"],
+      "description": "Point estimate. Must be null when uncited is true: an uncited parameter carries a range, never a point value."
+    },
+    "unit": { "type": "string", "minLength": 1, "description": "Explicit unit, e.g. SD/month, ratio, months, percent, CAD." },
+    "range_low": { "type": ["number", "null"] },
+    "range_high": { "type": ["number", "null"] },
+    "distribution": { "enum": ["point", "uniform", "normal", "lognormal", "triangular"] },
+    "citability_tier": { "enum": ["P", "A", "AS", "AN", "PR", "S"] },
+    "uncited": { "type": "boolean", "description": "True when no source supports the value. Uncited parameters stay visible; they are never dropped." },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "jurisdiction": { "enum": ["CA", "CA-provincial", "US", "INTL"] },
+    "extrapolated_from": {
+      "type": ["string", "null"],
+      "description": "Domain the evidence comes from when it is not the target domain (e.g. aviation, military, medicine). Null only if the evidence is on the target population."
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "independence_group"],
+        "properties": {
+          "source_id": { "type": "string", "pattern": "^SRC-[0-9]{2,}$", "description": "Key into data/sources.csv." },
+          "locator": { "type": "string", "description": "Page, table or section." },
+          "independence_group": {
+            "type": "string",
+            "description": "Sources sharing authors, data or principals share a group. Two sources in one group count as one for corroboration."
+          }
+        }
+      }
+    },
+    "visibility": { "enum": ["public", "private"] },
+    "scrub_flag": { "enum": ["clear", "review", "block"] },
+    "reviewer_role": { "type": "string", "description": "Role id, never a personal name." },
+    "red_team_status": { "enum": ["unreviewed", "challenged", "survived", "retired"] },
+    "date_retrieved": { "type": "string", "format": "date" },
+    "source_date": { "type": ["string", "null"] },
+    "sensitivity_note": { "type": "string", "description": "Result of the plus/minus 50% sweep: which decisions flip." }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "uncited": { "const": true } } },
+      "then": {
+        "properties": { "value": { "type": "null" }, "citability_tier": { "const": "S" } },
+        "required": ["range_low", "range_high"]
+      }
+    },
+    {
+      "if": { "properties": { "citability_tier": { "enum": ["AS", "AN", "PR", "S"] } } },
+      "then": { "required": ["range_low", "range_high"] }
+    },
+    {
+      "if": { "properties": { "red_team_status": { "const": "survived" } } },
+      "then": { "properties": { "evidence": { "minItems": 1 } }, "required": ["reviewer_role", "sensitivity_note"] }
+    }
+  ]
+}

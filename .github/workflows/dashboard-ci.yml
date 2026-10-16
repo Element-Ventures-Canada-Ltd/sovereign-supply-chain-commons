@@ -1,0 +1,55 @@
+# Handling: Unclassified — working
+#
+# Dashboard CI. Checks out the public OpenChokepoint repository at the exact commit in
+# Dashboard/openchokepoint.pin, runs the Dashboard tests against that pinned SDK, then builds
+# sample pages from the OpenChokepoint synthetic example and public registry. The pages are
+# attached to the run as a downloadable artifact; nothing is published or committed.
+name: Dashboard — CI
+
+on:
+  pull_request:
+    paths:
+      - "Dashboard/**"
+      - ".github/workflows/dashboard-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  dashboard:
+    name: Dashboard tests and sample build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Read pinned OpenChokepoint commit
+        id: pin
+        run: echo "commit=$(sed -n 's/^commit:[[:space:]]*//p' Dashboard/openchokepoint.pin)" >> "$GITHUB_OUTPUT"
+
+      - name: Check out OpenChokepoint at the pinned commit
+        uses: actions/checkout@v6
+        with:
+          repository: Element-Ventures-Canada-Ltd/openchokepoint
+          ref: ${{ steps.pin.outputs.commit }}
+          path: _openchokepoint
+          fetch-depth: 1
+          persist-credentials: false
+
+      - run: pip install pyyaml
+
+      - name: Dashboard tests
+        env:
+          OPENCHOKEPOINT_ROOT: ${{ github.workspace }}/_openchokepoint
+        run: python3 -m unittest discover -s Dashboard/tests -v
+
+      - name: Build sample pages
+        run: |
+          mkdir -p _site
+          python3 Dashboard/build.py _openchokepoint/examples/synthetic-turbopump-thread.yaml --openchokepoint _openchokepoint --out _site/synthetic-turbopump-thread.html
+          python3 Dashboard/build.py _openchokepoint/data/registry/launch-chain.yaml --openchokepoint _openchokepoint --out _site/public-registry.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-sample-pages
+          path: _site/
+          retention-days: 14

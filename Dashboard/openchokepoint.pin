@@ -1,0 +1,6 @@
+# Handling: Unclassified — working
+# The OpenChokepoint release this Dashboard is built and tested against.
+# build.py refuses to run against any other commit unless --allow-unpinned is given.
+# To upgrade: change the commit below in a pull request; CI re-runs the tests against it.
+repository: https://github.com/Element-Ventures-Canada-Ltd/openchokepoint
+commit: 77f151045fdf019fd9bdad424d370566fd3db707

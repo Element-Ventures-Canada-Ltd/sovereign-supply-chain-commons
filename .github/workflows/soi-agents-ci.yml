@@ -1,0 +1,33 @@
+name: SOI Graph Agents — CI
+
+# Tests the SOI Graph Agents code, and runs a no-write Feed Agent pass so watchlist URLs
+# are verified before merge. Report appears in the job summary.
+
+on:
+  pull_request:
+    paths:
+      - "Agents/**"
+      - ".github/workflows/soi-agents-*.yml"
+      - ".github/scripts/data_handling_guard.py"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Agent unit tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install pyyaml
+      - run: python3 -m unittest discover -s Agents/tests -v
+
+  feeds-dry-run:
+    name: Feed Agent dry run (no writes)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install pyyaml
+      - run: python3 Agents/soi_graph_agents.py feeds --dry-run >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,14 @@
+handling: "Unclassified — working"
+contribution: "Synthetic turbopump-class supply chain (sample)"
+type: dataset
+sources:
+  - description: "Authored by Element Ventures (Canada) Ltd. for illustration. No external source."
+    url: ""
+    licence: "Apache-2.0"
+    retrieved: "2026-10-08"
+synthetic: true
+personal_information: none
+export_controlled: false
+training_rights_confirmed: true
+base_model: ""
+notes: "Entirely fictional. Supplier names, countries, and relationships are invented and are not findings about any real company, country, or program. Mapping fields only; no technical data."

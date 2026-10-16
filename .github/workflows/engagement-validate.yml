@@ -1,0 +1,26 @@
+name: Engagement validation
+
+on:
+  pull_request:
+    paths: ["Engagement/**"]
+  push:
+    branches: [main]
+    paths: ["Engagement/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Engagement files
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install pyyaml
+      - name: Validate every engagement file
+        run: |
+          status=0
+          for f in Engagement/examples/*.yaml $(find Engagement -name engagement.yaml); do
+            python3 Engagement/tools/engagement.py validate "$f" || status=1
+          done
+          exit $status

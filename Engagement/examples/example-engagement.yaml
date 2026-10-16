@@ -1,0 +1,44 @@
+# Handling: Unclassified — working
+# FICTIONAL EXAMPLE — illustrates the engagement file format. No real engagement.
+
+engagement:
+  id: E-0000-EX
+  title: Example regional supplier and skills assessment
+  handling: "Unclassified — working"
+
+  roles:
+    client:        { label: "Client (contracting party)" }
+    sponsor:       { label: "Sponsor (gate authority)" }
+    delivery_lead: { label: "Engagement Lead" }
+
+  term: { start: 2026-01-05, end: 2026-06-30 }
+
+  solicitation: { stage: awarded, compliance_matrix: templates/solicitation-response/02-compliance-matrix.md }
+
+  reporting: { cadence_days: 14, anchor: 2026-01-16, channel: issue }
+
+  phases:
+    - { id: S1, name: Inception,           deliverable: D1, status: complete }
+    - { id: S2, name: Research,            deliverable: D2, status: in_progress }
+    - { id: S3, name: Report,              deliverable: D3, status: not_started }
+
+  deliverables:
+    - { id: D1, title: Inception report,   evidence: [inception report], status: accepted }
+    - { id: D2, title: Supplier database,  evidence: [database export, data dictionary], status: in_progress }
+    - { id: D3, title: Final report,       evidence: [final report], status: not_started }
+    - { id: PR, title: Progress reports,   evidence: [report issues], continuous: true, status: in_progress }
+
+  gates:
+    - { id: G1, name: Interim, date: 2026-03-13, deliverables: [D1, D2] }
+    - { id: G2, name: Final,   date: 2026-06-12, deliverables: [D3] }
+
+  acceptance:
+    - { id: interviews, name: Interviews, standard: At least 10 interviews, metric: interviews_completed, threshold: 10, evidence: [interview log] }
+    - { id: traceability, name: Traceability, standard: Every finding cited, evidence: [source log] }
+
+  metrics: { interviews_completed: 4 }
+
+  productization: { target: "Reusable supplier-registry module", conversion_date: 2026-09-30 }
+
+  open_items:
+    - { id: OI-01, question: "Coverage threshold for the database", owner: Engagement Lead, status: open }

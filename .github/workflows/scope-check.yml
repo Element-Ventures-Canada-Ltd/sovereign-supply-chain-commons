@@ -1,0 +1,32 @@
+name: Scope check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  scope-guard:
+    name: Scope guard (mapping only)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed files
+        run: |
+          git diff --name-only --diff-filter=ACM "origin/${{ github.base_ref }}"...HEAD > changed_files.txt
+          cat changed_files.txt
+
+      - name: Unit-test scope guard
+        run: python3 -m unittest discover -s .github/scripts/tests -v
+
+      - name: Run scope guard
+        env:
+          # Markers (# scope-ok: <reason>) are honoured only for OWNER, MEMBER, COLLABORATOR.
+          AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+        run: python3 .github/scripts/scope_guard.py changed_files.txt

@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  data-handling-guard:
+    name: Data-handling guard
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only --diff-filter=ACM "origin/${{ github.base_ref }}"...HEAD > changed_files.txt
+          else
+            git diff --name-only --diff-filter=ACM HEAD~1 HEAD > changed_files.txt || touch changed_files.txt
+          fi
+          cat changed_files.txt
+
+      - name: Run data-handling guard
+        run: python3 .github/scripts/data_handling_guard.py changed_files.txt
+
+  lint-templates:
+    name: Validate issue/PR templates and labels
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Check required governance files exist
+        run: |
+          required_files=(
+            "README.md" "CONTRIBUTING.md" "HANDLING.md" "CODE_OF_CONDUCT.md"
+            "SECURITY.md" "LICENSE" "NOTICE" "CLA.md" "MAINTAINERS.md"
+            ".github/PULL_REQUEST_TEMPLATE.md" ".github/labels.yml"
+          )
+          missing=0
+          for f in "${required_files[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "::error::Missing required governance file: $f"
+              missing=1
+            fi
+          done
+          exit $missing

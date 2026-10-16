@@ -1,0 +1,17 @@
+program_id,name,provider,jurisdiction,sector,domain,modality,status,cell_id,secondary_cell_ids,source_id,is_synthetic,as_of,notes
+PG-01,Health services occupational courses (CFHSTC),Canadian Forces Health Services Training Centre,CA,defence,health services,mixed,active,APP-M9,,SRC-06,0,2026-10-10,23 courses listed on the source page.
+PG-02,Canadian Forces trauma training (embedded civilian trauma centre),Canadian Forces Trauma Training Centre West,CA,defence,trauma,live,active,APP-M9,,SRC-07,0,2026-10-10,"Trains CF physicians, physician assistants and nursing officers in trauma care before deployment."
+PG-03,Basic Life Support (BLS),Heart and Stroke Foundation of Canada,CA,civilian,resuscitation,blended,active,APP-M9,,SRC-17,0,2026-10-10,
+PG-04,Advanced Cardiovascular Life Support (ACLS),Heart and Stroke Foundation of Canada,CA,civilian,resuscitation,blended,active,APP-M9,,SRC-17,0,2026-10-10,
+PG-05,Pediatric Advanced Life Support (PALS),Heart and Stroke Foundation of Canada,CA,civilian,resuscitation,blended,active,APP-M9,,SRC-17,0,2026-10-10,
+PG-06,Tactical Combat Casualty Care (TCCC) guidelines,Committee on Tactical Combat Casualty Care,US,defence,trauma,mixed,active,APP-M9,,SRC-18,0,2026-10-10,Guideline body; curricula delivered by many providers.
+PG-07,Advanced Trauma Life Support (ATLS),American College of Surgeons,INTL,dual-use,trauma,blended,active,APP-M9,,SRC-19,0,2026-10-10,
+PG-08,PROMPT obstetric emergencies training,PROMPT Maternity Foundation,INTL,civilian,obstetric,manikin,active,APP-M9,,SRC-20,0,2026-10-10,Multi-professional maternity team training.
+PG-09,Helping Mothers Survive,Jhpiego,INTL,civilian,obstetric,manikin,active,APP-M9,,SRC-21,0,2026-10-10,Simulation-based modules to reduce maternal and newborn mortality.
+PG-10,Resuscitation Quality Improvement (RQI),American Heart Association,INTL,civilian,resuscitation,manikin,active,APP-M9,,SRC-25,0,2026-10-10,"Low-dose, high-frequency model: short quarterly skills sessions."
+SYN-PG01,Synthetic VR hemorrhage-control refresher,Synthetic provider,,dual-use,trauma,vr,synthetic,APP-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+SYN-PG02,Synthetic quarterly obstetric emergency team drill,Synthetic provider,,civilian,obstetric,manikin,synthetic,APP-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+SYN-PG03,Synthetic rural resuscitation refresher module,Synthetic provider,,civilian,resuscitation,blended,synthetic,APP-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+PG-13,Space Systems Technician (SST),North American Space Institute,CA,civilian,space launch,blended,active,APP-M9,APP-M7,SRC-36,0,2026-10-11,"56 hours virtual plus 52 hours in person. Provider states 80% minimum per Performance Objective and pass/fail practical with full attendance. Provider states CCAA certification (SRC-37). Spacecraft hardware and cleanroom focus, not propulsion test."
+PG-14,High Power Rocketry certification program (Levels 1 to 4),Canadian Association of Rocketry / Association Canadienne de Fuséologie,CA,civilian,space launch,live,active,APP-M9,APP-M7,SRC-39,0,2026-10-11,"Age 18 or older, member in good standing, written exam before Level 1. Level 4 requires an individual (not team) project, the Electronics Endorsement and design review before flight."
+PG-15,Range Safety Officer program,Canadian Association of Rocketry / Association Canadienne de Fuséologie,CA,civilian,space launch,live,active,APP-M9,APP-M7,SRC-40,0,2026-10-11,Qualification by demonstrated experience and unanimous approval of a peer panel.

@@ -1,0 +1,56 @@
+{
+  "project_title": "Turbopump Marketplace",
+  "labels": [
+    { "name": "module:turbopump", "color": "006F7D", "description": "Turbopump Marketplace module" },
+    { "name": "type:epic", "color": "13212A", "description": "Parent tracking issue" },
+    { "name": "ws:registry", "color": "1F8A5B", "description": "Supplier registry" },
+    { "name": "ws:rfq", "color": "137A88", "description": "RFQ and matchmaking" },
+    { "name": "ws:control-tower", "color": "4C5FD5", "description": "Control-tower dashboard" },
+    { "name": "ws:gaps", "color": "B7860B", "description": "Gap and investment finder" },
+    { "name": "ws:interop", "color": "8A979F", "description": "Interop adapters" },
+    { "name": "ws:security", "color": "B42318", "description": "Security and governance" },
+    { "name": "ws:ux", "color": "5FD0DC", "description": "Dashboard UX" },
+    { "name": "zone:red", "color": "C4314F", "description": "Needs TRM approval before merge" },
+    { "name": "zone:green", "color": "1E7B4E", "description": "Auto-merge after checks" },
+    { "name": "status:todo", "color": "E6ECEF", "description": "" },
+    { "name": "status:in-review", "color": "DDEFF1", "description": "PR open" },
+    { "name": "status:blocked", "color": "FBE7E4", "description": "Waiting on a decision or access" },
+    { "name": "agent:claude", "color": "D9A64A", "description": "Claude can do this unattended" }
+  ],
+  "milestones": [
+    { "title": "M1 Open MVP", "due_on": "2026-11-13T23:59:00Z", "description": "Registry, RFQ, control tower and gap finder live on public data; CI and guard green." },
+    { "title": "M2 Interop and pilot", "due_on": "2026-12-11T23:59:00Z", "description": "Open adapters, pilot with first buyers and suppliers, red-team pass 1." },
+    { "title": "M3 Engine and hardening", "due_on": "2027-03-05T23:59:00Z", "description": "Private engine connected via the port, third-party platform plugin (if sandbox approved), red-team pass 2." }
+  ],
+  "epic": {
+    "title": "[TPM] Epic: Canada Space Turbopump Supply Chain Marketplace",
+    "labels": ["module:turbopump", "type:epic"],
+    "body": "Open-tier marketplace for the 41-part small liquid-rocket turbopump: supplier registry, RFQ matchmaking, control-tower view, gap and investment finder. Dashboard UX. Clean-room interop: third-party platform SDKs as out-of-repo plugins, data platforms as an import/export mapping only\n\nSub-tasks are linked below by the bootstrap script. Weekly digest posts here every Monday."
+  },
+  "issues": [
+    { "title": "Land module skeleton, data, tests and CI", "ws": "registry", "zone": "red", "m": 1, "agent": true, "body": "Merge the initial PR: data (41 parts, 28 entities, public sources), registry/RFQ/gaps/engine/interop code, 11 tests, OpenAPI contract, CI and guard.\n\n- [ ] CI green\n- [ ] Guard green with GUARD_TERMS secret set\n- [ ] TRM approves (red zone: workflows)" },
+    { "title": "Set GUARD_TERMS secret and PROJECT_TOKEN for automation", "ws": "security", "zone": "red", "m": 1, "agent": false, "body": "TRM only. Add repository secrets: GUARD_TERMS (restricted terms, one per line), PROJECT_TOKEN (fine-grained PAT, org Projects read/write). Add variable TPM_PROJECT_URL." },
+    { "title": "Resolve two ownership conflicts (Burloak parent, Magellan ownership)", "ws": "registry", "zone": "green", "m": 1, "agent": true, "body": "Two sources disagree on each. Find primary sources (corporate filings, GLEIF Level 2, ISED Federal Corporations). Update entities.json with grade 'confirmed' or keep 'reported' with a note.\n\n- [ ] Each change cites an https primary source" },
+    { "title": "Supplier self-registration flow with evidence upload", "ws": "registry", "zone": "green", "m": 1, "agent": true, "body": "Port the existing seller registration pattern: company, ownership, parts offered, sources. New records land as 'reported', never 'confirmed', until reviewed.\n\n- [ ] Validation mirrors the RFQ rules (no technical data)\n- [ ] Review queue for TRM" },
+    { "title": "ISED Federal Corporations adapter for supplier identity", "ws": "interop", "zone": "red", "m": 2, "agent": true, "body": "Open Government Licence - Canada. Match entities to corporation numbers. New data feed = red zone.\n\n- [ ] Licence file in adapter folder\n- [ ] Drops personal fields (directors) by default" },
+    { "title": "GLEIF Level 2 adapter for ultimate-parent checks", "ws": "interop", "zone": "red", "m": 2, "agent": true, "body": "Flags foreign control automatically. Feeds the ownership_class field with a source.\n\n- [ ] Cache and rate limits\n- [ ] Tests with recorded fixtures, no live calls in CI" },
+    { "title": "CanadaBuys award adapter: who already sells to DND and CSA", "ws": "interop", "zone": "red", "m": 2, "agent": true, "body": "OGL-Canada; keep organisations only, drop named contacts.\n\n- [ ] Adds 'prior federal awards' fact to supplier profile" },
+    { "title": "RFQ persistence and supplier responses (interested / no-bid / quote offline)", "ws": "rfq", "zone": "green", "m": 1, "agent": true, "body": "Implement POST /rfqs and /rfqs/{id}/quotes from the OpenAPI contract. Prices and technical data stay off-platform.\n\n- [ ] Audit log of every state change" },
+    { "title": "RFQ notifications to matched suppliers (opt-in)", "ws": "rfq", "zone": "red", "m": 2, "agent": false, "body": "Email only to suppliers who registered and opted in. Sends messages = red zone." },
+    { "title": "Controlled Goods Program check on export-listed lines", "ws": "rfq", "zone": "red", "m": 2, "agent": false, "body": "For ECL 6-3 lines, require the supplier to attest CGP registration before seeing the RFQ. Counsel review of wording." },
+    { "title": "Control-tower dashboard v1", "ws": "control-tower", "zone": "green", "m": 1, "agent": true, "body": "Coverage bar, ownership mix, export-listed count, BOM tree, entity drawer. Facts-only; engine panel shows 'connect engine' state.\n\n- [ ] Works at phone width\n- [ ] Light and dark\n- [ ] WCAG 2.1 AA contrast" },
+    { "title": "Engine port: connect private assessment engine in staging", "ws": "control-tower", "zone": "red", "m": 3, "agent": false, "body": "Deploy-time TPM_ENGINE_MODULE pointing at the private core. Nothing from the private core enters this repo.\n\n- [ ] Contract test: engine output matches the Assessment typedef" },
+    { "title": "Gap finder v1: build vs domesticate pathways", "ws": "gaps", "zone": "green", "m": 1, "agent": true, "body": "25 gaps today (8 no candidate, 17 no Canadian-owned). Group by assembly as project candidates.\n\n- [ ] Sources shown for every gap" },
+    { "title": "Investment one-pagers per gap project (unsized, open tier)", "ws": "gaps", "zone": "green", "m": 2, "agent": true, "body": "Generate a one-page brief per project: what is missing, who supplies it abroad, pathway. Sizing comes from the private engine later." },
+    { "title": "Supplier interviews: 8 unsourced parts", "ws": "gaps", "zone": "green", "m": 1, "agent": false, "body": "Dynamic seals, titanium billet, ceramic ball blanks, stainless and bearing steels, igniter, instrumentation, fasteners, static seals. Human work; results update parts.json." },
+    { "title": "Third-party platform plugin repo (out of tree) after sandbox approval", "ws": "interop", "zone": "red", "m": 3, "agent": false, "body": "the third party licence bars redistribution, so the plugin lives in a separate private repo and loads through TPM_INTEROP_PLUGINS.\n\n- [ ] Developer-programme approval\n- [ ] Plugin consumes only the labelled open bundle" },
+    { "title": "data-platform import/export mapping document", "ws": "interop", "zone": "green", "m": 2, "agent": true, "body": "Design-only: map our CSV tables to object types and links. No third party code. Comparable, never template." },
+    { "title": "CCO ontology alignment file for registry types", "ws": "interop", "zone": "green", "m": 2, "agent": true, "body": "Align Part, Entity, Ownership to Common Core Ontologies (BSD-3). Alignment file only." },
+    { "title": "Authentication, roles and rate limits for the API", "ws": "security", "zone": "red", "m": 2, "agent": true, "body": "Roles: buyer, supplier, reviewer, admin. Bearer tokens, short expiry, per-role rate limits.\n\n- [ ] OWASP ASVS L2 checklist" },
+    { "title": "Threat model (STRIDE) and red-team pass 1", "ws": "security", "zone": "red", "m": 2, "agent": true, "body": "Focus: data poisoning of supplier records, RFQ scraping for competitive intel, technical-data leakage, supply-chain attack on CI.\n\n- [ ] Findings filed as issues" },
+    { "title": "Pin GitHub Actions to commit SHAs and enable Dependabot", "ws": "security", "zone": "red", "m": 1, "agent": true, "body": "Supply-chain hardening for CI. Dependency pins = red zone." },
+    { "title": "Red-team pass 2 before engine connection", "ws": "security", "zone": "red", "m": 3, "agent": false, "body": "Independent reviewer. Includes the engine port and plugin loader (dynamic import paths)." },
+    { "title": "Accessibility and mobile audit of the dashboard", "ws": "ux", "zone": "green", "m": 2, "agent": true, "body": "WCAG 2.1 AA, keyboard paths through every tab, 360px width." },
+    { "title": "Weekly digest and board automation live", "ws": "ux", "zone": "red", "m": 1, "agent": false, "body": "After secrets are set, run the project-automation workflow once by hand and confirm the epic comment appears." }
+  ]
+}

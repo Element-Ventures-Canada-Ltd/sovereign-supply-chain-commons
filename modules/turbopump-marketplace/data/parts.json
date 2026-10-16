@@ -1,0 +1,935 @@
+{
+  "as_of": "2026-10-08",
+  "handling": "UNCLASSIFIED // PUBLIC",
+  "licence": "Apache-2.0",
+  "parts": [
+    {
+      "id": "TP-000",
+      "level": 0,
+      "parent": null,
+      "name": "Turbopump assembly",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-100",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Fuel (RP-1) pump assembly",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        },
+        {
+          "id": "E-002",
+          "name": "EOS GmbH",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-110",
+      "level": 2,
+      "parent": "TP-100",
+      "name": "Fuel inducer",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-002",
+          "name": "EOS GmbH",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        },
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-120",
+      "level": 2,
+      "parent": "TP-100",
+      "name": "Fuel impeller",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-002",
+          "name": "EOS GmbH",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        },
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-130",
+      "level": 2,
+      "parent": "TP-100",
+      "name": "Fuel volute / housing",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-002",
+          "name": "EOS GmbH",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        },
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-013",
+          "name": "Magellan Aerospace",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        },
+        {
+          "id": "E-020",
+          "name": "Linamar Corporation",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 4,
+      "canadian_owned_candidates": 2,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-140",
+      "level": 2,
+      "parent": "TP-100",
+      "name": "Wear rings / diffuser",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-020",
+          "name": "Linamar Corporation",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-200",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "LOX pump assembly",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [
+        "https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf"
+      ]
+    },
+    {
+      "id": "TP-210",
+      "level": 2,
+      "parent": "TP-200",
+      "name": "LOX inducer",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-220",
+      "level": 2,
+      "parent": "TP-200",
+      "name": "LOX impeller",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-230",
+      "level": 2,
+      "parent": "TP-200",
+      "name": "LOX volute / housing",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-013",
+          "name": "Magellan Aerospace",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-240",
+      "level": 2,
+      "parent": "TP-200",
+      "name": "LOX pump motor (Phase 2)",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-022",
+          "name": "Dana TM4",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-300",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Turbine assembly",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-310",
+      "level": 2,
+      "parent": "TP-300",
+      "name": "Turbine blisk",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [
+        "https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"
+      ]
+    },
+    {
+      "id": "TP-320",
+      "level": 2,
+      "parent": "TP-300",
+      "name": "Turbine nozzle / stator",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-330",
+      "level": 2,
+      "parent": "TP-300",
+      "name": "Turbine manifold / exhaust housing",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-400",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Rotor, bearing and seal system",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-410",
+      "level": 2,
+      "parent": "TP-400",
+      "name": "Main shaft",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-020",
+          "name": "Linamar Corporation",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        },
+        {
+          "id": "E-013",
+          "name": "Magellan Aerospace",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 2,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-420",
+      "level": 2,
+      "parent": "TP-400",
+      "name": "Cryogenic bearings",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-003",
+          "name": "Undisclosed German bearing developer",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        },
+        {
+          "id": "E-005",
+          "name": "Carter Manufacturing Ltd (Carter Bearings)",
+          "ownership_class": "Foreign",
+          "country": "GB"
+        },
+        {
+          "id": "E-024",
+          "name": "Cerobear (MinebeaMitsumi)",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        }
+      ],
+      "candidate_count": 3,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [
+        "https://product.minebeamitsumi.com/en/product/category/bearing/cerobear/index.html"
+      ]
+    },
+    {
+      "id": "TP-430",
+      "level": 2,
+      "parent": "TP-400",
+      "name": "Dynamic seals",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": [
+        "https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf"
+      ]
+    },
+    {
+      "id": "TP-440",
+      "level": 2,
+      "parent": "TP-400",
+      "name": "Balance piston / thrust balance", "scope_ok": "# scope-ok: thrust balance is the standard part-category name, no spec",      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-020",
+          "name": "Linamar Corporation",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-450",
+      "level": 2,
+      "parent": "TP-400",
+      "name": "High-speed rotor balancing (service)",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-020",
+          "name": "Linamar Corporation",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-500",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Gas generator assembly (Phase 3)",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-510",
+      "level": 2,
+      "parent": "TP-500",
+      "name": "GG injector",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-520",
+      "level": 2,
+      "parent": "TP-500",
+      "name": "GG chamber",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-010",
+          "name": "Burloak Technologies (i3D Manufacturing)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-530",
+      "level": 2,
+      "parent": "TP-500",
+      "name": "Igniter",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-600",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Electric drive (Phases 1-2 test configuration)",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-001",
+          "name": "National student rocketry programme (turbopump project)",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-610",
+      "level": 2,
+      "parent": "TP-600",
+      "name": "High-speed permanent-magnet motor",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-022",
+          "name": "Dana TM4",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [],
+      "source_note": "Public citation held in the maintainer's private record."
+    },
+    {
+      "id": "TP-620",
+      "level": 2,
+      "parent": "TP-600",
+      "name": "Inverter / motor controller",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-022",
+          "name": "Dana TM4",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-700",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Propellant and GG valves",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-028",
+          "name": "Moog Inc.",
+          "ownership_class": "Foreign",
+          "country": "US"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-710",
+      "level": 2,
+      "parent": "TP-700",
+      "name": "Instrumentation",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-800",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Fasteners",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": [
+        "https://www.smartindunews.com/news/Latest_Sector_News/Aerospace_Components_Shortages_Are_Reshaping_Lead_Times.html"
+      ]
+    },
+    {
+      "id": "TP-810",
+      "level": 2,
+      "parent": "TP-800",
+      "name": "Static seals / gaskets",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-910",
+      "level": 3,
+      "parent": "TP-220",
+      "name": "Nickel superalloy powder (additive)",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [
+        "https://www.voxelmatters.directory/company/advance-powders/"
+      ]
+    },
+    {
+      "id": "TP-920",
+      "level": 3,
+      "parent": "TP-120",
+      "name": "Titanium alloy powder (additive)",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-011",
+          "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-012",
+          "name": "Tekna Plasma Systems",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [
+        "https://3dprintingindustry.com/news/tekna-defeats-colibrium-additives-apc-in-metal-powder-patent-dispute-231352/"
+      ]
+    },
+    {
+      "id": "TP-930",
+      "level": 3,
+      "parent": "TP-310",
+      "name": "Nickel superalloy bar / forging stock",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-027",
+          "name": "Special Metals Corp. (Precision Castparts)",
+          "ownership_class": "Foreign",
+          "country": "US"
+        }
+      ],
+      "candidate_count": 1,
+      "canadian_owned_candidates": 0,
+      "gap": "no_canadian_owned_candidate",
+      "note": null,
+      "sources": [
+        "https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"
+      ]
+    },
+    {
+      "id": "TP-940",
+      "level": 3,
+      "parent": "TP-130",
+      "name": "Titanium billet / bar",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": [
+        "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2860247-jet-engines-driving-nickel-pq-titanium-demand"
+      ]
+    },
+    {
+      "id": "TP-950",
+      "level": 3,
+      "parent": "TP-410",
+      "name": "Stainless and bearing steels",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": [
+        "https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"
+      ]
+    },
+    {
+      "id": "TP-960",
+      "level": 3,
+      "parent": "TP-130",
+      "name": "Aluminium casting alloy",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-023",
+          "name": "Rio Tinto Canada (Aluminium)",
+          "ownership_class": "Canadian subsidiary of foreign parent",
+          "country": "CA"
+        },
+        {
+          "id": "E-013",
+          "name": "Magellan Aerospace",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [
+        "https://www.newswire.ca/news-releases/magellan-aerospace-becomes-aeromet-a20x-advanced-aluminium-foundry-licensee-697617541.html"
+      ]
+    },
+    {
+      "id": "TP-970",
+      "level": 3,
+      "parent": "TP-420",
+      "name": "Ceramic bearing ball blanks",
+      "export_list": [],
+      "candidates": [],
+      "candidate_count": 0,
+      "canadian_owned_candidates": 0,
+      "gap": "no_candidate",
+      "note": null,
+      "sources": []
+    },
+    {
+      "id": "TP-980",
+      "level": 3,
+      "parent": "TP-610",
+      "name": "Rare-earth permanent magnets",
+      "export_list": [],
+      "candidates": [
+        {
+          "id": "E-015",
+          "name": "Neo Performance Materials",
+          "ownership_class": "Canadian",
+          "country": "EE"
+        },
+        {
+          "id": "E-016",
+          "name": "REalloys Inc.",
+          "ownership_class": "Foreign",
+          "country": "CA"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": null,
+      "sources": [
+        "https://www.neomaterials.com/"
+      ]
+    },
+    {
+      "id": "TP-990",
+      "level": 1,
+      "parent": "TP-000",
+      "name": "Component and turbopump test and qualification (service)",
+      "export_list": [
+        "ECL-6-3"
+      ],
+      "candidates": [
+        {
+          "id": "E-019",
+          "name": "Canada Rocket Company",
+          "ownership_class": "Canadian",
+          "country": "CA"
+        },
+        {
+          "id": "E-029",
+          "name": "DLR Institute of Space Propulsion",
+          "ownership_class": "Foreign",
+          "country": "DE"
+        }
+      ],
+      "candidate_count": 2,
+      "canadian_owned_candidates": 1,
+      "gap": null,
+      "note": "Public reports place domestic test capacity from 2028",
+      "sources": [
+        "https://ca.finance.yahoo.com/news/canadian-company-build-countrys-first-153013394.html",
+        "https://www.dlr.de/en/ra/about-us/departments/rocket-propulsion-systems/turbo-pump-technology"
+      ]
+    }
+  ]
+}

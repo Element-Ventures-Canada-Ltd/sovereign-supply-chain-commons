@@ -1,0 +1,45 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Environment / secrets — never commit real values
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials/
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+.venv/
+
+# Build output
+dist/
+build/
+*.log
+
+# Data — raw or sensitive data never belongs in this repo (see HANDLING.md);
+# local scratch/exports are ignored by default
+/data/raw/
+/data/local/
+*.local.json
+*.local.csv
+
+# Dashboard build output and local OpenChokepoint checkout (CI)
+/dashboard.html
+/_site/
+/_openchokepoint/
+
+# Workforce Training and Simulation binaries: built locally by tools/build.py,
+# never committed (the interop guard rejects binary documents in the open tier)
+/WorkforceTrainingSimulation/release/*.xlsx
+/WorkforceTrainingSimulation/release/*.sqlite

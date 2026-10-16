@@ -1,0 +1,8 @@
+{
+  "_handling": "Handling: Unclassified — working",
+  "_why": "Every commit in this repository is authored as the owner. The session-start hook applies this; the guard enforces it.",
+  "name": "T. Leroy Smith",
+  "email": "tleroy@elementventureslp.com",
+  "github_login": "TLS-sys",
+  "blocked_identities": ["noreply@anthropic.com"]
+}

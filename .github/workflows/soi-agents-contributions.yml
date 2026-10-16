@@ -1,0 +1,42 @@
+name: SOI Graph Agents — contributions
+
+# Contribution Agent: plain checks on pull requests, issues and comments.
+# Applies labels and writes a job summary. It never comments, merges or closes.
+#
+# Security: pull_request_target runs with the BASE branch code only. This
+# workflow never checks out or executes code from a pull request; changed files
+# are read as text through the GitHub API, and the event payload is read from
+# a file, never interpolated into shell commands.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: soi-agents-contrib-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  screen:
+    name: Contribution Agent
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Run Contribution Agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 Agents/soi_graph_agents.py contributions

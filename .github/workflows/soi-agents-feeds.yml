@@ -1,0 +1,32 @@
+name: SOI Graph Agents — feeds
+
+# Feed Agent: checks every feed in Agents/feed-watchlist.yaml for availability,
+# moved URLs, licence changes and new publications, then updates one rolling
+# issue (label agent:feeds). It comments only when a maintainer needs to act.
+# Reads public endpoints only; collects no entity data.
+
+on:
+  schedule:
+    - cron: "17 13 * * 1,4"   # Mondays and Thursdays, 13:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: soi-agents-feeds
+  cancel-in-progress: false
+
+jobs:
+  feeds:
+    name: Feed Agent
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install pyyaml
+      - name: Run Feed Agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 Agents/soi_graph_agents.py feeds

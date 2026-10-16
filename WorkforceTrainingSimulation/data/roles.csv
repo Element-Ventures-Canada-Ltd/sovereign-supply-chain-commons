@@ -1,0 +1,14 @@
+role_id,title,noc_2021,sector,cell_id,source_id,notes
+RL-01,Registered nurses and registered psychiatric nurses,31301,civilian,SOV-M9,SRC-16,
+RL-02,"Physician assistants, midwives and allied health professionals",31303,dual-use,SOV-M9,SRC-16,Covers physician assistants trained at CF trauma centres and midwives.
+RL-03,Paramedical occupations,32102,dual-use,SOV-M9,SRC-16,
+RL-04,College and other vocational instructors,41210,civilian,SOV-M9,SRC-16,Nearest NOC home for simulation instructors and educators.
+RL-05,Commissioned officers of the Canadian Armed Forces,40042,defence,SOV-M9,SRC-16,Includes medical and nursing officers.
+RL-06,Operations members of the Canadian Armed Forces,43204,defence,SOV-M9,SRC-16,Includes medical technicians.
+RL-07,Aerospace engineers,21390,dual-use,SOV-M7,SRC-16,Nearest NOC home for propulsion test engineers and test conductors.
+RL-08,Mechanical engineers,21301,dual-use,SOV-M7,SRC-16,Nearest NOC home for turbomachinery designers.
+RL-09,Mechanical engineering technologists and technicians,22301,dual-use,SOV-M7,SRC-16,Nearest NOC home for test-stand and propellant-handling technicians.
+RL-10,Industrial instrument technicians and mechanics,22312,dual-use,SOV-M7,SRC-16,Nearest NOC home for instrumentation and data-acquisition technicians.
+RL-11,Non-destructive testers and inspection technicians,22230,dual-use,SOV-M7,SRC-16,
+RL-12,Occupational health and safety specialists,22232,dual-use,SOV-M7,SRC-16,Nearest NOC home for test-site safety officers and range safety officers; no dedicated NOC exists.
+RL-13,Welders and related machine operators,72106,dual-use,SOV-M7,SRC-16,

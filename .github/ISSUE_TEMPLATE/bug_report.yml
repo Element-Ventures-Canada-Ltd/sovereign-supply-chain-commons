@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a defect in the ontology, registry, dashboard, or decision-engine code
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please confirm this doesn't involve sensitive data — see HANDLING.md. Do not paste any real registry data or credentials into this issue.
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Workstream
+      options:
+        - Ontology
+        - Registry
+        - Dashboard
+        - Decision-Engine
+        - Repo governance / CI
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (OS, version, browser, etc.)
+    validations:
+      required: false

@@ -1,0 +1,32 @@
+name: Survey validation
+
+on:
+  pull_request:
+    paths: ["Survey/**"]
+  push:
+    branches: [main]
+    paths: ["Survey/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Survey item bank
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install pyyaml
+      - name: Validate every item bank and check the rendered questionnaire is current
+        run: |
+          status=0
+          for f in Survey/instrument/item-bank-*.yaml; do
+            python3 Survey/tools/survey.py validate "$f" || status=1
+            v=$(basename "$f" .yaml | sed 's/item-bank-//')
+            python3 Survey/tools/survey.py render "$f" --out "/tmp/questionnaire-$v.md" >/dev/null
+            if ! diff -q "/tmp/questionnaire-$v.md" "Survey/instrument/questionnaire-$v.md"; then
+              echo "::error::Survey/instrument/questionnaire-$v.md is out of date. Re-run survey.py render."
+              status=1
+            fi
+          done
+          exit $status

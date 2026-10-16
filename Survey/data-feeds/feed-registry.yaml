@@ -1,0 +1,45 @@
+# Handling: Unclassified — working
+# Machine-readable feed registry for the SOI Graph (turbopump, survey wave 1).
+# Human-readable detail: Survey/data-feeds/BLUEPRINT.md. Licences marked "verify" are unconfirmed.
+handling: "Unclassified — working"
+version: "0.1"
+updated: "2026-10-08"
+phases:
+  1: open-mvp
+  2: survey-ready
+  3: licensed-layer
+feeds:
+  - {id: trade-csl, name: "Trade.gov Consolidated Screening List", category: export-control, licence: LicenseRef-USGov-PD, tier: OPEN, role: [validation], phase: 1, keys: [name, address]}
+  - {id: ofac-sdn, name: "OFAC SDN and Non-SDN", category: sanctions, licence: LicenseRef-USGov-PD, tier: OPEN, role: [validation], phase: 1, keys: [ofac_uid]}
+  - {id: ca-sema, name: "Canada Consolidated Autonomous Sanctions List", category: sanctions, licence: OGL-Canada-2.0, licence_status: verify, tier: OPEN, role: [validation], phase: 1}
+  - {id: uk-sanctions-list, name: "UK Sanctions List (FCDO)", category: sanctions, licence: OGL-UK-3.0, tier: OPEN, role: [validation], phase: 1, keys: [unique_id]}
+  - {id: eu-fsf, name: "EU Financial Sanctions Files", category: sanctions, licence: LicenseRef-EU-Reuse, licence_status: verify, tier: OPEN, role: [validation], phase: 1}
+  - {id: au-dfat, name: "Australia DFAT Consolidated List", category: sanctions, licence: CC-BY-4.0, licence_status: verify, tier: OPEN, role: [validation], phase: 2}
+  - {id: nz-russia-sanctions, name: "NZ Russia Sanctions Register", category: sanctions, licence: LicenseRef-NZ-Crown, licence_status: verify, tier: OPEN, role: [validation], phase: 2}
+  - {id: dod-1260h, name: "DoD Section 1260H list", category: adversarial-origin, licence: LicenseRef-USGov-PD, tier: OPEN, role: [validation], phase: 1}
+  - {id: fcc-covered, name: "FCC Covered List", category: adversarial-origin, licence: LicenseRef-USGov-PD, tier: OPEN, role: [validation], phase: 2}
+  - {id: gleif-l1-l2, name: "GLEIF Golden Copy L1, L2 and mapping files", category: ownership, licence: CC0-1.0, tier: OPEN, role: [pre-population, validation], phase: 1, keys: [LEI, opencorporates_id]}
+  - {id: ca-corporations, name: "Corporations Canada incl. ISC", category: registry, licence: OGL-Canada-2.0, licence_status: verify, tier: OPEN, person_data_tier: LICENSED, role: [pre-population, validation], phase: 1, keys: [corporation_number, business_number]}
+  - {id: uk-companies-house, name: "UK Companies House incl. PSC", category: registry, licence: OGL-UK-3.0, tier: OPEN, person_data_tier: LICENSED, role: [pre-population, validation], phase: 1, keys: [company_number]}
+  - {id: sec-edgar, name: "SEC EDGAR Exhibit 21 and Form D", category: registry-funding, licence: LicenseRef-USGov-PD, tier: OPEN, role: [pre-population, validation], phase: 2, keys: [CIK]}
+  - {id: usaspending, name: "USAspending.gov prime and sub-awards", category: contracts, licence: LicenseRef-USGov-PD, tier: OPEN, role: [pre-population, validation], phase: 1, keys: [UEI]}
+  - {id: sam-contract-awards, name: "SAM.gov Contract Awards API and Entity extract", category: contracts, licence: LicenseRef-USGov-Data, licence_status: verify, tier: OPEN, role: [pre-population, validation], phase: 2, keys: [UEI, CAGE]}
+  - {id: sbir, name: "SBIR.gov awards", category: grants, licence: LicenseRef-USGov-PD, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: ca-contracts-10k, name: "Canada contracts over $10,000", category: contracts, licence: OGL-Canada-2.0, tier: OPEN, role: [pre-population, validation], phase: 1, keys: [vendor_name]}
+  - {id: ca-grants-contributions, name: "Canada grants and contributions", category: grants, licence: OGL-Canada-2.0, tier: OPEN, role: [pre-population, validation], phase: 1}
+  - {id: canadabuys, name: "CanadaBuys contract history and tenders", category: contracts, licence: OGL-Canada-2.0, licence_status: verify, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: eu-cordis-ted, name: "EU CORDIS and TED", category: grants-contracts, licence: CC-BY-4.0, licence_status: verify, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: uk-find-a-tender, name: "UK Find a Tender / Contracts Finder (OCDS)", category: contracts, licence: OGL-UK-3.0, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: uspto-odp, name: "USPTO Open Data Portal (PatentsView tables)", category: patents, licence: LicenseRef-USGov-PD, tier: OPEN, role: [pre-population, validation], phase: 1, keys: [assignee_id], filter: {cpc: ["F02K 9/46", "F02K 9/48", "F02K 9/563"]}}
+  - {id: openalex, name: "OpenAlex", category: literature, licence: CC0-1.0, tier: OPEN, role: [pre-population], phase: 2, keys: [ROR]}
+  - {id: statcan-cimt, name: "Statistics Canada CIMT", category: trade-aggregate, licence: OGL-Canada-2.0, tier: OPEN, role: [validation], phase: 2}
+  - {id: us-census-trade, name: "US Census USA Trade", category: trade-aggregate, licence: LicenseRef-USGov-PD, tier: OPEN, role: [validation], phase: 2}
+  - {id: critical-minerals, name: "USGS MCS, NRCan Critical Minerals List, EU CRM list", category: materials, licence: mixed-open, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: gcat, name: "GCAT launch and engine catalogue", category: space, licence: CC-BY-4.0, licence_status: verify, tier: OPEN, role: [pre-population], phase: 2}
+  - {id: cgp-directory, name: "Controlled Goods Program registrant directory", category: certification, tier: META, role: [pre-population, validation], phase: 2, note: "registrants may opt out; absence is not evidence"}
+  - {id: iaqg-oasis, name: "IAQG OASIS", category: certification, tier: META, role: [validation], phase: 2}
+  - {id: pri-eauditnet, name: "PRI eAuditNet (Nadcap)", category: certification, tier: META, role: [validation], phase: 2}
+  - {id: nato-ncage, name: "NATO NCAGE", category: registry, tier: META, role: [validation], phase: 2}
+  - {id: epo-ops, name: "EPO OPS / Espacenet", category: patents, tier: META, role: [pre-population, validation], phase: 2, note: "family identifiers only"}
+  - {id: opensanctions-data, name: "OpenSanctions consolidated data", category: sanctions, licence: CC-BY-NC-4.0, tier: LICENSED, role: [validation], phase: 3, note: "software (MIT) usable in open tier; data requires licence"}
+  - {id: opencorporates, name: "OpenCorporates API", category: registry, licence: ODbL-1.0, tier: LICENSED, role: [pre-population, validation], phase: 3, note: "store IDs only in open tier"}

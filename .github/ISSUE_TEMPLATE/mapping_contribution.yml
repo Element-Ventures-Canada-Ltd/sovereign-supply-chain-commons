@@ -1,0 +1,52 @@
+name: Supply-chain mapping contribution
+description: Propose a supplier, dependency, or chokepoint from public sources
+title: "[Mapping]: "
+labels: ["mapping", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mapping only: suppliers, dependencies, and chokepoints. Do not include technical data on how a component is designed, made, or tested, or on how it performs. See CONTRIBUTION-SCOPE.md.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - Supplier
+        - Dependency between two entities
+        - Chokepoint
+        - Correction to an existing entry
+    validations:
+      required: true
+  - type: textarea
+    id: entities
+    attributes:
+      label: Entities and relationship
+      description: Name the entities involved and how they relate (for example, who supplies what to whom).
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Public sources
+      description: Link at least one public source for each claim. Do not paste non-public material.
+    validations:
+      required: true
+  - type: textarea
+    id: confidence
+    attributes:
+      label: Confidence and gaps
+      description: What is well supported, what is inferred, and what is unknown?
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: This is mapping only and contains no technical data on design, manufacture, testing, or performance.
+          required: true
+        - label: Every claim above is supported by a public source I have linked.
+          required: true
+        - label: I have read HANDLING.md, CONTRIBUTION-SCOPE.md, and DATA-CONTRIBUTIONS.md.
+          required: true

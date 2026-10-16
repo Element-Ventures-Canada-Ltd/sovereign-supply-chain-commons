@@ -1,0 +1,94 @@
+# Handling: Unclassified — working
+# Feed Agent watchlist. Feed IDs match Survey/data-feeds/feed-registry.yaml.
+# kinds: page (status, redirect, text change, must_contain phrases)
+#        data (HEAD only: status, last-modified, etag; never downloads the dataset)
+#        ckan (open.canada.ca catalogue metadata: licence id, last modified)
+#        json (API reachability) | fedreg (newest Federal Register document)
+# verify: true means the URL has not yet been confirmed by a successful run.
+# bot_protected: true means the site blocks automated readers (HTTP 403); the agent notes it and moves on.
+handling: "Unclassified — working"
+version: "0.1"
+feeds:
+  - id: trade-csl
+    checks:
+      - {label: dataset, kind: data, url: "https://data.trade.gov/downloadable_consolidated_screening_list/v1/consolidated.json"}
+      - {label: page, kind: page, url: "https://www.trade.gov/consolidated-screening-list"}
+  - id: ofac-sdn
+    verify: true
+    checks:
+      - {label: dataset, kind: data, url: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML"}
+      - {label: page, kind: page, url: "https://ofac.treasury.gov/sanctions-list-service"}
+  - id: ca-sema
+    verify: true
+    checks:
+      - {label: page, kind: page, url: "https://www.international.gc.ca/world-monde/international_relations-relations_internationales/sanctions/consolidated-consolide.aspx?lang=eng"}
+  - id: uk-sanctions-list
+    checks:
+      - {label: dataset, kind: data, url: "https://sanctionslist.fcdo.gov.uk/docs/UK-Sanctions-List.xml"}
+      - {label: page, kind: page, url: "https://www.gov.uk/government/publications/the-uk-sanctions-list"}
+      - {label: licence, kind: page, url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/", must_contain: ["Open Government Licence"]}
+  - id: eu-fsf
+    verify: true
+    checks:
+      - {label: page, kind: page, url: "https://data.europa.eu/data/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions"}
+  - id: au-dfat
+    verify: true
+    checks:
+      - {label: page, kind: page, url: "https://www.dfat.gov.au/international-relations/security/sanctions/consolidated-list"}
+  - id: fcc-covered
+    verify: true
+    checks:
+      - {label: page, kind: page, url: "https://www.fcc.gov/supplychain/coveredlist", bot_protected: true}
+  - id: gleif-l1-l2
+    checks:
+      - {label: page, kind: page, url: "https://www.gleif.org/en/lei-data/gleif-golden-copy/download-the-golden-copy"}
+      - {label: latest-publish, kind: json, url: "https://goldencopy.gleif.org/api/v2/golden-copies/publishes/latest"}
+      - {label: licence, kind: page, url: "https://www.gleif.org/en/meta/lei-data-terms-of-use", must_contain: ["CC0"]}
+  - id: uk-companies-house
+    checks:
+      - {label: company-snapshot, kind: page, url: "https://download.companieshouse.gov.uk/en_output.html"}
+      - {label: psc-snapshot, kind: page, url: "https://download.companieshouse.gov.uk/en_pscdata.html"}
+  - id: sec-edgar
+    verify: true
+    checks:
+      - {label: api-docs, kind: page, url: "https://www.sec.gov/search-filings/edgar-application-programming-interfaces"}
+  - id: usaspending
+    checks:
+      - {label: api, kind: json, url: "https://api.usaspending.gov/api/v2/references/toptier_agencies/"}
+  - id: sam-contract-awards
+    checks:
+      - {label: announcement, kind: page, url: "https://sam.gov/announcements/contract-awards-data-and-searching-now-samgov"}
+      - {label: api-docs, kind: page, url: "https://open.gsa.gov/api/contract-awards/"}
+  - id: ca-contracts-10k
+    checks:
+      - {label: catalogue, kind: ckan, url: "https://open.canada.ca/data/api/action/package_show?id=d8f85d91-7dec-4fd1-8055-483b77225d8b", expect_licence: "ca-ogl-lgo"}
+  - id: ca-grants-contributions
+    checks:
+      - {label: catalogue, kind: ckan, url: "https://open.canada.ca/data/api/action/package_show?id=432527ab-7aac-45b5-81d6-7597107a7013", expect_licence: "ca-ogl-lgo"}
+  - id: uspto-odp
+    checks:
+      - {label: dataset, kind: page, url: "https://data.uspto.gov/bulkdata/datasets/pvgpatdis"}
+      - {label: whats-new, kind: page, url: "https://data.uspto.gov/support/whats-new"}
+  - id: openalex
+    checks:
+      - {label: api, kind: json, url: "https://api.openalex.org/works?per-page=1"}
+  - id: gcat
+    verify: true
+    checks:
+      - {label: page, kind: page, url: "https://planet4589.org/space/gcat/"}
+  - id: cgp-directory
+    checks:
+      - {label: page, kind: page, url: "https://www.canada.ca/en/public-services-procurement/services/industrial-security/controlled-goods/find-individuals-organizations-registered-program.html"}
+  - id: iaqg-oasis
+    checks:
+      - {label: page, kind: page, url: "https://www.p-r-i.org/certification/services/oasis"}
+  - id: opensanctions-data
+    checks:
+      - {label: licence-terms, kind: page, url: "https://www.opensanctions.org/docs/commercial/exemption/", must_contain: ["commercial"]}
+  - id: opencorporates
+    checks:
+      - {label: api-terms, kind: page, url: "https://api.opencorporates.com/documentation/API-Reference"}
+  # Regulatory watch: BIS Affiliates Rule (50% ownership). Alerts on any new BIS document matching the term.
+  - id: bis-affiliates-rule
+    checks:
+      - {label: federal-register, kind: fedreg, url: "https://www.federalregister.gov/api/v1/documents.json?per_page=5&order=newest&conditions%5Bagencies%5D%5B%5D=industry-and-security-bureau&conditions%5Bterm%5D=%22affiliates%20rule%22"}

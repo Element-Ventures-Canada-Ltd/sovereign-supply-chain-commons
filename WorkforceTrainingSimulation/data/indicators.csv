@@ -1,0 +1,18 @@
+indicator_id,name,value,value_text,unit,period,geography,role_id,cell_id,source_id,is_synthetic,as_of,notes
+IN-01,CAF recruits planned,19700,"about 19,700",recruits,2022-2025,CA,,SOV-M9,SRC-08,0,2026-10-10,
+IN-02,CAF recruits obtained,15000,"about 15,000",recruits,2022-2025,CA,,SOV-M9,SRC-08,0,2026-10-10,
+IN-03,CAF recruit shortfall,4700,"about 4,700",recruits,2022-2025,CA,,SOV-M9,SRC-08,0,2026-10-10,Shortfall against plan; not a measure of occupations at risk.
+IN-04,Applicants on track to start basic training,,1 in 13,ratio,2022-2025,CA,,SOV-M9,SRC-08,0,2026-10-10,
+IN-05,Royal College-accredited simulation centres,19,19,centres,2023,CA,,INF-M9,SRC-10,0,2026-10-10,Differs from IN-06; accreditation route is being retired (see EE-05).
+IN-06,Accredited simulation programs listed by the Royal College,22,22,programs,2026-10-10,CA,,INF-M9,SRC-11,0,2026-10-10,Programs keep recognition until their cycle ends; no new applications since Nov 2022.
+IN-07,Simulation Canada network: simulationists,4000,"4,000+",people,2026-10-10,CA,RL-04,SOV-M9,SRC-09,0,2026-10-10,Self-reported.
+IN-08,Simulation Canada network: institutions,200,200+,institutions,2026-10-10,CA,,INF-M9,SRC-09,0,2026-10-10,Self-reported.
+IN-09,Courses listed by CFHSTC,23,23,courses,2026-10-10,CA,,APP-M9,SRC-06,0,2026-10-10,A three-level course is counted once.
+IN-10,Studies in simulation-education meta-analysis,609,609,studies,to 2011,INTL,,APP-M9,SRC-26,0,2026-10-10,"Large effects on knowledge, skills and behaviours; moderate effects on patient outcomes."
+IN-11,Trainees in simulation-education meta-analysis,35226,"35,226",trainees,to 2011,INTL,,APP-M9,SRC-26,0,2026-10-10,
+SYN-IN01,Synthetic Centre A annual learner hours,5200,"5,200",learner-hours,synthetic year,,,INF-M9,,1,2026-10-10,Synthetic.
+SYN-IN02,Synthetic Centre B annual learner hours,3100,"3,100",learner-hours,synthetic year,,,INF-M9,,1,2026-10-10,Synthetic.
+SYN-IN03,Synthetic Centre C annual learner hours,900,900,learner-hours,synthetic year,,,INF-M9,,1,2026-10-10,Synthetic.
+IN-12,Canadian space companies unable to fill vacant positions,61,61%,percent of companies,2021,CA,,SOV-M7,SRC-44,0,2026-10-11,
+IN-13,Canadian space companies unable to fill vacant positions,55,55%,percent of companies,2020,CA,,SOV-M7,SRC-44,0,2026-10-11,
+IN-14,Technicians as a share of the Canadian space workforce,11,11%,percent of workforce,2019,CA,,SOV-M7,SRC-45,0,2026-10-11,

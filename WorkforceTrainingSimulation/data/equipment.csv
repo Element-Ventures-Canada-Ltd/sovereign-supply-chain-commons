@@ -1,0 +1,14 @@
+equipment_id,facility_id,equipment_class,fidelity,quantity,modality,cell_id,is_synthetic,as_of,notes
+SYN-EQ01,SYN-FA01,high-fidelity-manikin,high,4,manikin,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ02,SYN-FA01,task-trainer,low,12,manikin,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ03,SYN-FA01,av-capture,n/a,3,live,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ04,SYN-FA02,vr-system,medium,10,vr,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ05,SYN-FA02,high-fidelity-manikin,high,2,manikin,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ06,SYN-FA02,standardized-patient-suite,n/a,1,live,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ07,SYN-FA03,high-fidelity-manikin,high,1,manikin,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ08,SYN-FA03,vr-system,medium,2,vr,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ09,SYN-FA04,task-trainer,medium,20,manikin,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ10,SYN-FA04,vr-system,medium,6,vr,INF-M9,1,2026-10-10,Synthetic.
+SYN-EQ11,SYN-FA05,test-stand,n/a,1,live,INF-M9,1,2026-10-11,Synthetic.
+SYN-EQ12,SYN-FA05,cold-flow-rig,medium,1,live,INF-M9,1,2026-10-11,Synthetic. Part-task trainer for fill and abort drills.
+SYN-EQ13,SYN-FA05,console-simulator,medium,2,vr,INF-M9,1,2026-10-11,Synthetic. Test-conductor console simulator.

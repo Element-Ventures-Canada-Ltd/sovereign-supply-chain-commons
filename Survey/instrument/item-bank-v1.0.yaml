@@ -1,0 +1,468 @@
+# Handling: Unclassified — working
+# Sovereign Supply Chain Survey — item bank v1.0 (pilot draft)
+# Single source of truth for the questionnaire. Render with:
+#   python3 Survey/tools/survey.py render Survey/instrument/item-bank-v1.0.yaml
+# Validate with:
+#   python3 Survey/tools/survey.py validate Survey/instrument/item-bank-v1.0.yaml
+#
+# `scored: true` marks items that also feed private scoring. Weights, rubric
+# thresholds and scoring logic are held in the proprietary core repository and
+# never appear here.
+
+handling: "Unclassified — working"
+instrument: SSCP-SURVEY
+version: "1.0.0-pilot"
+status: pilot-draft
+rotating_module_topic: turbopump-supply-chain
+
+segments:
+  SUP: Canadian launch-chain suppliers (tier 1-3, incl. materials, AM bureaus, test houses, academic service labs)
+  CON: Consortium members (may also be SUP)
+  PRM: Primes and launch-vehicle developers or integrators
+  GOV: Government buyers and program offices
+  ALY: Allied partners (allied-nation firms and agencies)
+
+feeds:
+  M: Milestone evidence for program deliverables
+  T: Control-tower data layer (consented records only)
+  X: Composite benchmark index (aggregate, published)
+  E: Eligibility review for sprint and red-team invitations
+
+formats:
+  SC: Single choice
+  MC: Multiple choice
+  RK: Ranked choice
+  NUM: Numeric with range validation
+  GRID: Grid of single choices
+  M5: Five-level anchored maturity scale, always followed by an evidence tier (ET)
+  OT: Short open text, 300 characters, technical-data screen applied
+  CHK: Required checkbox
+
+evidence_tiers:
+  ET0: No documentation
+  ET1: Internal documentation exists
+  ET2: Documentation available for confidential review
+  ET3: Externally audited, certified or contractually demonstrated
+
+generic_m5_anchors:
+  1: Ad hoc. Depends on individuals; no documented process.
+  2: Managed. Documented at project level; followed inconsistently.
+  3: Defined. Organization-wide standard; routinely followed; owner assigned.
+  4: Measured. Quantitative performance data tracked and used for decisions.
+  5: Optimizing. Data-driven continuous improvement; extended to suppliers and partners.
+
+modules:
+  - id: A
+    title: Screener and consent
+    status: core-frozen
+    est_minutes: "2-3"
+    items:
+      - id: A01
+        text: Which best describes your organization's primary role in the Canadian space-launch supply chain?
+        format: SC
+        options: [Supplier or manufacturer, "Service provider (test, engineering, AM bureau)", Launch-vehicle developer or integrator, Government buyer or program office, Allied-nation organization, Academic or research, Other]
+        segments: [ALL]
+        feeds: [T, X]
+        routing: Assigns primary segment.
+      - id: A02
+        text: Select all additional roles your organization holds.
+        format: MC
+        options: [Same list as A01, Consortium member]
+        segments: [ALL]
+        feeds: [T]
+        routing: Multi-role respondents answer the union of segment items; duplicates suppressed.
+      - id: A03
+        text: Where is your organization headquartered, and where are its space-relevant facilities?
+        format: GRID
+        options: [Country of headquarters, Provinces or territories of facilities]
+        segments: [ALL]
+        feeds: [T, X]
+      - id: A04
+        text: Is your organization Canadian-controlled?
+        format: SC
+        options: [Canadian-controlled, Foreign-controlled with Canadian operations, Foreign, Prefer not to say]
+        segments: [ALL]
+        feeds: [T, X]
+        scored: true
+      - id: A05
+        text: "Consent tier. Choose how your responses may be used."
+        format: SC
+        options: ["1 - Aggregate statistics only", "2 - Aggregate plus a confidential organization record in the control-tower data layer", "3 - Tier 2 plus eligibility review for sprint and red-team invitations"]
+        segments: [ALL]
+        feeds: [M, T, E]
+      - id: A06
+        text: I confirm my answers will not include technical data, drawings, specifications or performance data controlled under the Canadian Export Control List, the Controlled Goods Program, US ITAR or any other export-control regime.
+        format: CHK
+        segments: [ALL]
+        feeds: []
+        routing: Gate. Without attestation, threshold items route to categorical-only versions.
+      - id: A07
+        text: Is your organization registered in Canada's Controlled Goods Program?
+        format: SC
+        options: ["Yes", "No", In process, Not applicable]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+
+  - id: B
+    title: Core panel
+    status: core-frozen
+    est_minutes: "8-10"
+    items:
+      - id: B01
+        text: Annual revenue attributable to space and launch activities, last fiscal year.
+        format: SC
+        options: [Under $1M, $1-10M, $10-50M, Over $50M, Prefer not to say]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: B02
+        text: Full-time-equivalent staff in space or launch work, and the share holding engineering or technical qualifications.
+        format: NUM
+        options: [FTE count, "Share band: under 25%, 25-50%, 50-75%, over 75%"]
+        segments: [SUP, CON, PRM]
+        feeds: [X]
+        scored: true
+      - id: B03
+        text: Which space value-chain categories do you operate in?
+        format: MC
+        options: [Upstream - manufacturing, Upstream - launch, Upstream - ground segment, Upstream - research and engineering services, Downstream - operations, Downstream - applications and services, Other]
+        segments: [SUP, CON, PRM, ALY]
+        feeds: [T, X]
+      - id: B04
+        text: Which propulsion-related business lines do you serve?
+        format: MC
+        options: [Raw materials, Machining, Additive manufacturing, Fabrication, Seals and interconnects, Test services, Test equipment, Instrumentation, Systems integration, Research and development, Other]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+      - id: B05
+        text: For your three most critical inputs, how many qualified sources do you have, and where are they?
+        format: GRID
+        options: ["Input category", "Qualified sources: 1 / 2 / 3+", "Source region: Canada / US / other allied / other"]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: B06
+        text: Supply-chain risk management maturity.
+        format: M5
+        anchors:
+          1: Suppliers known only at tier 1.
+          2: Critical-supplier list maintained.
+          3: Multi-tier map for critical items, reviewed at least annually.
+          4: Risk metrics (lead time, concentration) tracked and acted on.
+          5: Risk monitoring shared with customers and suppliers.
+        segments: [SUP, CON, PRM]
+        feeds: [X, E]
+        scored: true
+      - id: B07
+        text: Cyber and supply-chain security maturity for engineering data (Govern, Identify, Protect, Detect, Respond, Recover).
+        format: M5
+        segments: [SUP, CON, PRM]
+        feeds: [X]
+        scored: true
+      - id: B08
+        text: In the past 12 months, has a supply disruption delayed a space or launch deliverable by more than four weeks? If yes, select causes.
+        format: MC
+        options: ["No", Materials, Capacity, Export licensing, Quality escape, Test access, Workforce, Financing]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: B09
+        text: Without new contracts, how long could your space or launch operations continue at current staffing?
+        format: SC
+        options: [Under 6 months, 6-12 months, 12-24 months, Over 24 months, Prefer not to say]
+        segments: [SUP, CON]
+        feeds: [X]
+        scored: true
+      - id: B10
+        text: Who owns the IP in your space or launch products?
+        format: SC
+        options: [Wholly owned, Jointly owned, Licensed in, Licensed in with field or territory restrictions, Government-owned background IP, Mixed]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: B11
+        text: Do any critical inputs or IP licences carry foreign re-transfer or end-use restrictions?
+        format: SC
+        options: ["Yes", "No", Unsure]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: B12
+        text: Rate how much each factor constrains Canadian sovereign launch capability.
+        format: GRID
+        options: ["Rows: test infrastructure; materials; AM capacity; qualification and traceability evidence; workforce; export controls; procurement predictability; financing; IP access", "Scale: not a constraint / minor / moderate / major / severe"]
+        segments: [ALL]
+        feeds: [M, X]
+      - id: B13
+        text: Which sovereign capability gaps would you be willing to help close in the next 12 months?
+        format: MC
+        options: [Materials, Bearings and seals, Additive manufacturing, Traceability and qualification, Test access, Export-control readiness, Workforce, None]
+        segments: [SUP, CON, PRM, ALY]
+        feeds: [E]
+        scored: true
+      - id: B14
+        text: What could you contribute to the consortium?
+        format: MC
+        options: [Test time, Materials, Engineering hours, Data, Facilities, Mentoring or training, Capital, None]
+        segments: [SUP, CON, PRM, ALY]
+        feeds: [E]
+        scored: true
+      - id: B15
+        text: Which Defence Industrial Strategy sovereign-capability areas is your organization positioned for?
+        format: MC
+        options: [Space launch, Space-based surveillance and reconnaissance, Satellite communications, Space domain awareness, Other]
+        segments: [ALL]
+        feeds: [M, X]
+
+  - id: C
+    title: Rotating module - Turbopump supply chain and IP (wave 1)
+    status: rotating
+    est_minutes: "12-18"
+    items:
+      - id: C01
+        text: How is your organization involved with liquid rocket engine turbopumps or their sub-elements?
+        format: MC
+        options: [Design, Manufacture of whole units, "Components (impellers, inducers, turbines, housings, shafts)", Bearings, Seals, Materials or powders, Additive manufacturing, Machining or finishing, Cleaning or inspection, Test, Buyer or integrator, Regulator or funder, None]
+        segments: [ALL]
+        feeds: [T, X]
+        routing: "None routes to the light version (C12, C22, C24, C31 only)."
+      - id: C02
+        text: Which pump architectures do you work with?
+        format: MC
+        options: [Gas-generator turbopump, Staged combustion, Expander, Electric-motor pump, Pressure-fed (no pump), Unsure]
+        segments: [SUP, CON, PRM]
+        feeds: [T]
+      - id: C03
+        text: Development stage of your turbopump-related work.
+        format: SC
+        options: [Concept, Component test, Subscale pump test, Full-scale pump test, Engine-integrated hot fire, Flight]
+        segments: [SUP, CON, PRM]
+        feeds: [M, X]
+        scored: true
+      - id: C04
+        text: "For each input, indicate source region, number of qualified sources and typical lead time: nickel superalloy bar or forgings; nickel or titanium AM powder; copper alloys; hydrogen-resistant alloys; cryogenic bearing steels; ceramic or hybrid bearing elements; dynamic seals."
+        format: GRID
+        options: ["Source region: Canada / US / EU-UK / other allied / other", "Qualified sources: 0 / 1 / 2 / 3+", "Lead time: under 3 / 3-6 / 6-12 / over 12 months"]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: C05
+        text: Is any input in C04 single-sourced from outside Canada with no qualified alternative? Describe mitigation without technical data.
+        format: OT
+        options: ["Yes or no per input", Mitigation text]
+        segments: [SUP, CON, PRM]
+        feeds: [M, T, X]
+        scored: true
+      - id: C06
+        text: Bearing and seal qualification maturity.
+        format: M5
+        anchors:
+          1: Commercial parts, no cryogenic qualification.
+          2: Vendor data relied on.
+          3: In-house qualification test procedure.
+          4: Life data tracked across runs.
+          5: Qualified alternate sources and validated life prediction.
+        segments: [SUP, CON, PRM]
+        feeds: [X, E]
+        scored: true
+      - id: C07
+        text: Which processes do you use or procure for turbopump-class parts?
+        format: MC
+        options: [Laser powder bed fusion, Directed energy deposition, Electron beam, Conventional casting, Forging, Multi-axis machining, Hot isostatic pressing, None]
+        segments: [SUP, CON, PRM]
+        feeds: [T]
+      - id: C08
+        text: Where is your additive manufacturing capacity for these parts located?
+        format: SC
+        options: [Own equipment in Canada, Canadian bureau, Foreign bureau - US, Foreign bureau - EU-UK, Foreign bureau - other, None]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: C09
+        text: Additive manufacturing process-control maturity for rotating or pressure-critical parts.
+        format: M5
+        anchors:
+          1: Prototype prints, no parameter control.
+          2: Documented parameters per part.
+          3: Qualified process with powder-lot traceability.
+          4: In-process monitoring and statistical acceptance data.
+          5: Qualified for flight hardware against a customer-accepted specification.
+        segments: [SUP, CON]
+        feeds: [X, E]
+        scored: true
+      - id: C10
+        text: Largest metal additive build envelope available to you in Canada.
+        format: SC
+        options: [Under 250 mm, 250-400 mm, 400-600 mm, Over 600 mm, None]  # scope-ok: build-envelope size bands for capacity mapping, no part specs
+        segments: [SUP, CON]
+        feeds: [T, X]
+      - id: C11
+        text: Which turbopump-relevant tests can you perform in Canada, in-house or by contracted access?
+        format: MC
+        options: [Component spin or balance, Cold-flow water test, Cryogenic (LN2) flow, LOX-compatible flow, Hot-gas turbine test, Engine-integrated hot fire, None]
+        segments: [SUP, CON, PRM, GOV]
+        feeds: [M, T, X]
+        scored: true
+      - id: C12
+        text: For tests you cannot perform in Canada, where do you go and what is the typical wait?
+        format: GRID
+        options: ["Test type", "Location: US / EU-UK / other", "Wait: under 1 / 1-3 / 3-6 / over 6 months"]
+        segments: [SUP, CON, PRM]
+        feeds: [M, T, X]
+        scored: true
+      - id: C13
+        text: Would you offer test capacity to consortium members under a standard access agreement?
+        format: SC
+        options: ["Yes", Maybe, "No"]
+        segments: [SUP, CON]
+        feeds: [E]
+        scored: true
+      - id: C14
+        text: Who holds title to your turbopump-related IP?
+        format: SC
+        options: [Own organization, University, Non-profit, Government, Foreign licensor, Joint, Unsure]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: C15
+        text: Do government funding conditions restrict how you can license or transfer that IP?
+        format: SC
+        options: ["Yes", "No", Unsure]
+        segments: [SUP, CON]
+        feeds: [T, X]
+      - id: C16
+        text: IP management maturity.
+        format: M5
+        anchors:
+          1: No IP register.
+          2: Register of patents and confidential know-how.
+          3: Background and foreground IP defined in all contracts.
+          4: Licensing strategy with field and territory controls, audited.
+          5: Portfolio actively used for sovereign licensing and partnering.
+        segments: [SUP, CON, PRM]
+        feeds: [X, E]
+        scored: true
+      - id: C17
+        text: Would you consider licensing turbopump-related IP to Canadian consortium members on standard terms?
+        format: SC
+        options: ["Yes", Yes with conditions, "No", Not applicable]
+        segments: [SUP, CON]
+        feeds: [E]
+        scored: true
+      - id: C18
+        text: Do any of your pump or turbine products or designs meet or exceed the public MTCR Annex Item 3.A.5 thresholds (shaft speed of 8,000 rpm or more, or discharge pressure of 7 MPa or more)? Do not provide specifications.  # scope-ok: quotes public MTCR Annex Item 3.A.5 thresholds
+        format: SC
+        options: ["Yes", "No", Unsure]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        routing: Shown only after A06 attestation.
+      - id: C19
+        text: Which export-control regimes apply to your turbopump-related work?
+        format: MC
+        options: [Canadian Export Control List, Controlled Goods Program, US ITAR, US EAR, Other allied regime, None, Unsure]
+        segments: [SUP, CON, PRM, ALY]
+        feeds: [T, X]
+        scored: true
+      - id: C20
+        text: In the past 24 months, how much have export-licensing timelines delayed turbopump-related work?
+        format: SC
+        options: [No delay, Under 1 month, 1-3 months, 3-6 months, Over 6 months]
+        segments: [SUP, CON, PRM, ALY]
+        feeds: [M, T, X]
+        scored: true
+      - id: C21
+        text: Export-control compliance maturity.
+        format: M5
+        anchors:
+          1: No classification process.
+          2: Items classified on request.
+          3: Designated official; documented classification and record-keeping.
+          4: Audits and training tracked.
+          5: Compliance built into design and supplier onboarding.
+        segments: [SUP, CON, PRM]
+        feeds: [X, E]
+        scored: true
+      - id: C22
+        text: Select the three elements whose loss would most delay a sovereign Canadian turbopump program.
+        format: RK
+        options: [Superalloy supply, Additive manufacturing capacity, Bearings, Seals, Traceability and qualification records, Cleaning and oxygen-compatibility capability, Inducer and impeller design expertise, Rotordynamics expertise, Cryogenic test, Hot-fire test, Workforce, IP access]
+        segments: [ALL]
+        feeds: [M, T, X]
+        scored: true
+      - id: C23
+        text: If your most critical foreign supplier became unavailable tomorrow, how long would it take to qualify an alternative?
+        format: SC
+        options: [Under 3 months, 3-6 months, 6-12 months, 12-24 months, Over 24 months, No alternative known]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+      - id: C24
+        text: Which one capability investment would most accelerate Canadian turbopump readiness?
+        format: OT
+        segments: [ALL]
+        feeds: [M, E]
+      - id: C30
+        text: Manufacturing pedigree and traceability maturity for turbopump-class parts (material lot through build, heat treatment, machining, cleaning, inspection and serialization).
+        format: M5
+        anchors:
+          1: No lot-level traceability.
+          2: Paper travellers per part.
+          3: Serialized traceability from material lot to finished part.
+          4: Queryable digital records linked to nonconformance data.
+          5: Digital thread shared with customers and extended to suppliers.
+        segments: [SUP, CON, PRM]
+        feeds: [M, X, E]
+        scored: true
+      - id: C31
+        text: Rank what most limits domestic turbopump supply today.
+        format: RK
+        options: [Qualification and pedigree evidence, Lead time, Cost, Capacity, Design expertise, Test access]
+        segments: [ALL]
+        feeds: [M, X]
+      - id: C32
+        text: Where can turbopump parts be cleaned and verified for oxygen service?
+        format: SC
+        options: [In-house in Canada, Contracted in Canada, Foreign provider, Not available, Not applicable]
+        segments: [SUP, CON, PRM]
+        feeds: [T, X]
+        scored: true
+
+  - id: D
+    title: Segment add-ons
+    status: core-frozen
+    est_minutes: "3-5"
+    items:
+      - id: D01
+        text: Expected turbopump or pump-fed engine demand over the next 36 months, with your confidence.
+        format: GRID
+        options: ["Units per year: 0 / 1-5 / 6-20 / over 20", "Confidence: low / medium / high"]
+        segments: [PRM]
+        feeds: [M, T]
+      - id: D02
+        text: Do you plan to make, buy or partner for turbopumps?
+        format: SC
+        options: [Make, Buy Canadian, Buy foreign, Partner, Undecided]
+        segments: [PRM]
+        feeds: [M, X]
+        scored: true
+      - id: D03
+        text: Which procurement or funding instruments are planned for propulsion supply-chain development?
+        format: MC
+        options: [Innovation challenge or contest, Directed procurement, Contribution program, Crown corporation support, None known]
+        segments: [GOV]
+        feeds: [M]
+      - id: D04
+        text: What evidence would your organization need to accept a Canadian-sourced turbopump component?
+        format: MC
+        options: [Qualification test report, Flight heritage, Third-party certification, Source inspection, Traceability records, Other]
+        segments: [GOV, PRM]
+        feeds: [M, X]
+      - id: D05
+        text: Under which arrangements could your organization collaborate on Canadian turbopump development? Export-control caveats apply.
+        format: MC
+        options: [Co-development, Licensed production, Test access, Supply, None]
+        segments: [ALY]
+        feeds: [T, E]
+        scored: true
+
+retired_ids: [C25, C26, C27, C28, C29]  # pilot-draft renumbering; never reuse

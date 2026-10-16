@@ -1,0 +1,36 @@
+handling: "Unclassified — working"
+contribution: "Workforce Training and Simulation database"
+type: dataset
+sources:
+  - description: "Public Government of Canada pages: Defence Industrial Strategy, ITB Key Industrial Capabilities, DAOD 2010-0 and 2010-1, CFHSTC, Auditor General Report 7 (2025), NOC 2021, Red Seal (sources.csv SRC-01 to SRC-06, SRC-08, SRC-15, SRC-16)"
+    url: "https://www.canada.ca/"
+    licence: "Citation and short factual findings only; source content not redistributed"
+    retrieved: "2026-10-10"
+  - description: "Peer-reviewed studies on simulation education and skill retention (sources.csv SRC-10, SRC-22 to SRC-24, SRC-26)"
+    url: "https://pubmed.ncbi.nlm.nih.gov/"
+    licence: "Citation and short factual findings only; source content not redistributed"
+    retrieved: "2026-10-10"
+  - description: "Programme owners, professional bodies and institutions: Royal College, Simulation Canada, Heart and Stroke Foundation, American College of Surgeons, American Heart Association, PROMPT, Jhpiego, Defense Health Agency, NACHC, Hospital News (sources.csv SRC-07, SRC-09, SRC-11 to SRC-14, SRC-17 to SRC-21, SRC-25, SRC-27)"
+    url: "https://simulationcanada.ca/about/"
+    licence: "Citation and short factual findings only; source content not redistributed"
+    retrieved: "2026-10-10"
+  - description: "Space-launch propulsion test slice: US eCFR and LII (14 CFR 450.149, 417.105), Parliament of Canada (Bill C-28), Transport Canada, Justice Laws (SOR/2013-211), Natural Resources Canada, CWB Group, Canadian Space Agency, Canadian Association of Rocketry, North American Space Institute, Wikipedia (general reference), and peer-reviewed skill-decay and simulator-transfer studies (sources.csv SRC-28 to SRC-31, SRC-36 to SRC-50)"
+    url: "https://www.parl.ca/legisinfo/en/bill/45-1/c-28"
+    licence: "Citation and short factual findings only; source content not redistributed"
+    retrieved: "2026-10-11"
+  - description: "Synthetic test rows (ids SYN-*), invented for structure testing; no real entity"
+    url: ""
+    licence: "OGL-Canada-2.0"
+    retrieved: "2026-10-10"
+synthetic: false          # mixed: public rows plus labelled synthetic rows (is_synthetic = 1)
+personal_information: none
+export_controlled: false
+training_rights_confirmed: true  # confirmed by Responsible Person (TLS-sys) on 2026-10-10
+base_model: ""
+notes: >-
+  Every public row cites a source in data/sources.csv with URL and citability
+  grade; the full source list is there, not repeated here. Synthetic rows are
+  marked is_synthetic = 1, ids SYN-*, names starting "Synthetic", and cite no
+  source. Workforce and training records only: no technical data on how any
+  component is designed, made, tested or performs. Calibrated parameter values
+  are not included.

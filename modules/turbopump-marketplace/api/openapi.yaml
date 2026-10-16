@@ -1,0 +1,186 @@
+openapi: 3.1.0
+info:
+  title: Turbopump Marketplace API (open tier)
+  version: 0.1.0
+  summary: Supplier registry, RFQ matchmaking, control-tower facts, gap finder and interop export.
+  description: |
+    Clean-room API owned by Element Ventures (Canada) Ltd. Every response carries a handling label.
+    Open tier returns facts only; scores, lead times and scenarios come from the private engine
+    and appear only when a deployer connects it. Technical data for export-listed goods is never accepted.
+  license: { name: Apache-2.0, identifier: Apache-2.0 }
+servers:
+  - url: http://localhost:8080/v1
+security:
+  - bearer: []
+tags:
+  - { name: registry }
+  - { name: rfq }
+  - { name: control-tower }
+  - { name: gaps }
+  - { name: interop }
+paths:
+  /parts:
+    get:
+      tags: [registry]
+      summary: Bill of materials with coverage status
+      parameters:
+        - { name: coverage, in: query, schema: { $ref: '#/components/schemas/Coverage' } }
+        - { name: export_listed, in: query, schema: { type: boolean } }
+      responses:
+        '200': { description: Parts, content: { application/json: { schema: { $ref: '#/components/schemas/LabelledParts' } } } }
+  /parts/{id}:
+    get:
+      tags: [registry]
+      summary: One part with its candidates
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^TP-\d{3}$' } }]
+      responses:
+        '200': { description: One part with candidates }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /suppliers:
+    get:
+      tags: [registry]
+      summary: Search entities
+      parameters:
+        - { name: q, in: query, schema: { type: string, maxLength: 100 } }
+        - { name: ownership, in: query, schema: { $ref: '#/components/schemas/Ownership' } }
+        - { name: role, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Entities }
+  /suppliers/{id}:
+    get:
+      tags: [registry]
+      summary: One supplier profile
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^E-\d{3}$' } }]
+      responses:
+        '200': { description: Entity profile with parts it could supply and sources }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /rfqs:
+    post:
+      tags: [rfq]
+      summary: Create an RFQ and get ranked matches
+      description: Ranking is Canadian-owned first, then evidence grade, then source citability. No prices.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RfqInput' } } }
+      responses:
+        '201': { description: RFQ created with match lines, content: { application/json: { schema: { $ref: '#/components/schemas/RfqMatch' } } } }
+        '422': { description: Validation errors (including refused technical data) }
+  /rfqs/{id}:
+    get:
+      tags: [rfq]
+      summary: One RFQ with response status
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: RFQ and quote status }
+  /rfqs/{id}/quotes:
+    post:
+      tags: [rfq]
+      summary: A supplier responds (interest, no-bid, or quote reference held off-platform)
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entity_id, response]
+              properties:
+                entity_id: { type: string }
+                response: { enum: [interested, no_bid, quote_submitted_offline] }
+                note: { type: string, maxLength: 500 }
+      responses:
+        '201': { description: Recorded }
+  /control-tower/summary:
+    get:
+      tags: [control-tower]
+      summary: Coverage, ownership mix, export-listed count, plus engine assessment if connected
+      responses:
+        '200': { description: Summary and assessment (assessment fields null in the open tier) }
+  /gaps:
+    get:
+      tags: [gaps]
+      summary: Parts with no candidate or no Canadian-owned candidate, with build or domesticate pathway
+      responses:
+        '200': { description: Gaps }
+  /gaps/projects:
+    get:
+      tags: [gaps]
+      summary: Gaps grouped by assembly as investable project candidates (unsized in the open tier)
+      responses:
+        '200': { description: Projects }
+  /interop/bundle:
+    get:
+      tags: [interop]
+      summary: Labelled, vendor-neutral JSON bundle (master format)
+      responses:
+        '200': { description: Bundle }
+  /interop/tables/{name}:
+    get:
+      tags: [interop]
+      summary: Flat CSV tables for dataset import into analytics platforms
+      parameters: [{ name: name, in: path, required: true, schema: { enum: [entities.csv, parts.csv, part_candidates.csv] } }]
+      responses:
+        '200': { description: CSV, content: { text/csv: {} } }
+  /interop/adapters:
+    get:
+      tags: [interop]
+      summary: Adapter slots and their status (built, slot, design-only, planned)
+      responses:
+        '200': { description: Adapter list }
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    NotFound: { description: Not found }
+  schemas:
+    Label:
+      type: object
+      required: [policy, classification, categories]
+      properties:
+        policy: { type: string, example: CA-OPEN }
+        classification: { const: UNCLASSIFIED }
+        categories: { type: array, items: { type: string }, example: [PUBLIC] }
+        releasable_to: { type: array, items: { type: string } }
+    Coverage: { enum: [no_candidate, no_canadian_owned_candidate, canadian_owned_candidate] }
+    Ownership: { enum: [Canadian, Canadian subsidiary of foreign parent, Foreign] }
+    Part:
+      type: object
+      required: [id, name, level, export_list, candidates]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        level: { type: integer, minimum: 0, maximum: 3 }
+        parent: { type: [string, 'null'] }
+        export_list: { type: array, items: { type: string } }
+        candidates: { type: array, items: { type: object, properties: { id: { type: string }, name: { type: string }, ownership_class: { $ref: '#/components/schemas/Ownership' } } } }
+        sources: { type: array, items: { type: string, format: uri } }
+    LabelledParts:
+      type: object
+      properties:
+        label: { $ref: '#/components/schemas/Label' }
+        data: { type: array, items: { $ref: '#/components/schemas/Part' } }
+    RfqInput:
+      type: object
+      required: [title, part_ids, quantity]
+      additionalProperties: false
+      properties:
+        title: { type: string, minLength: 4, maxLength: 120 }
+        part_ids: { type: array, minItems: 1, maxItems: 41, items: { type: string } }
+        quantity: { type: integer, minimum: 1, maximum: 10000 }
+        need_by: { type: string, format: date }
+        sovereignty: { enum: [any, canadian_presence, canadian_owned], default: any }
+        notes: { type: string, maxLength: 1000, description: No technical data. Refused if detected. }
+    RfqMatch:
+      type: object
+      properties:
+        label: { $ref: '#/components/schemas/Label' }
+        fully_covered: { type: boolean }
+        lines:
+          type: array
+          items:
+            type: object
+            properties:
+              part_id: { type: string }
+              eligible: { type: integer }
+              flags: { type: array, items: { type: object, properties: { code: { type: string }, text: { type: string } } } }
+              candidates: { type: array, items: { type: object } }

@@ -1,0 +1,21 @@
+# Handling: Unclassified — working
+# Connector manifest template. Copy to Connectors/<feed_id>/manifest.yaml.
+# See Survey/data-feeds/BLUEPRINT.md, sections 3 and 7.
+handling: "Unclassified — working"
+feed_id: ""                 # short, stable, kebab-case, e.g. gleif-l2
+name: ""
+publisher: ""
+url: ""
+access: ""                  # bulk | rest-api | manual
+cadence: ""                 # e.g. daily, quarterly
+licence_spdx: ""            # e.g. CC0-1.0, OGL-Canada-2.0, OGL-UK-3.0, LicenseRef-USGov-PD
+tier_placement: ""          # OPEN | META | LICENSED (LICENSED connectors are interface stubs only)
+evidence_tier: ""           # P | AN | AS | S
+survey_role: []             # pre-population, validation
+identifier_keys: []         # e.g. LEI, UEI, CAGE, CIK, company_number, assignee_id
+entities_emitted: []        # FtM or soi: schema names
+relationships_emitted: []   # e.g. SUBSIDIARY_OF, LISTED_ON
+credentials_required: false # if true, read from environment variables only
+personal_information: none  # none | excluded-at-ingest (explain in notes)
+technical_data: false       # must be false; connectors collect mapping data only
+notes: ""

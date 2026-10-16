@@ -1,0 +1,70 @@
+name: Bounty issue (maintainers)
+description: Publish a scoped, tiered issue with acceptance tests (maintainers only)
+title: "[Bounty]: "
+labels: ["bounty", "triage"]
+body:
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Tier
+      options:
+        - Starter (C$100)
+        - Standard (C$500)
+        - Major (C$1,500)
+        - Expert (C$3,000 to C$5,000)
+    validations:
+      required: true
+  - type: dropdown
+    id: funded-deliverable
+    attributes:
+      label: Funded Deliverable
+      description: >-
+        "Yes" means copyright in the accepted work is assigned to EV, with a
+        licence back to the contributor (CLA.md section 12.6). Set this before
+        the issue is claimed; it cannot be added later.
+      options:
+        - "No (contributor keeps copyright; licence under the CLA)"
+        - "Yes (assignment on acceptance)"
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: What is to be done
+      description: One clear outcome. Say which files or modules are affected.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance tests
+      description: Objective checks a reviewer can run. A bounty without these is not published.
+    validations:
+      required: true
+  - type: input
+    id: depends-on
+    attributes:
+      label: Depends on
+      description: What must merge first (for example, a schema version). Write "none" if nothing. If something is listed, add the `blocked` label.
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Files and folders affected
+      description: Used to confirm this can run in parallel with other open bounties.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope-check
+    attributes:
+      label: Scope check
+      options:
+        - label: This issue stays within CONTRIBUTION-SCOPE.md and asks for no technical data about how components are designed, made, tested, or perform
+          required: true
+        - label: The ledger has headroom under the pool ceiling (see LEDGER.md)
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        Nominal values are recorded in the deferred ledger and are paid only after a Funding Event. See BOUNTIES.md.

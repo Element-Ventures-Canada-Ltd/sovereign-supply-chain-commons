@@ -1,0 +1,39 @@
+# Handling: Unclassified — working
+#
+# Red zone gate. Fails any pull request that changes a red-zone path (per
+# .github/CODEOWNERS on the base branch), so red pull requests merge only via
+# the repository owner's logged ruleset bypass. Green pull requests pass.
+#
+# Runs on pull_request_target so the workflow, script and CODEOWNERS always come
+# from the base branch; a pull request cannot edit its own gate. It checks out
+# the base branch only and reads the changed-file list from the REST API. No
+# pull request code is checked out or run.
+name: Red zone
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  gate:
+    name: Red zone gate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Unit-test the gate
+        run: python3 -m unittest discover -s .github/scripts/tests -p 'test_red_zone_gate.py' -v
+
+      - name: Classify changed paths
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python3 .github/scripts/red_zone_gate.py

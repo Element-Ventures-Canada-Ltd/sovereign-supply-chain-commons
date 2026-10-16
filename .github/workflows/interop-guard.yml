@@ -1,0 +1,59 @@
+# Handling: Unclassified — working
+#
+# Interop/IP guard. Scans every file in a pull request's tree for proprietary
+# SDK references, restricted terms, non-UNCLASSIFIED handling labels and
+# binary file types that could carry technical data (scripts/check-interop-guard.mjs).
+#
+# Security design:
+# - Runs on pull_request_target, so this workflow, the guard script and its
+#   tests always come from main. A pull request cannot weaken its own check.
+# - The pull request is checked out as DATA only, into pr/, with no stored
+#   credentials. Nothing from it is installed or executed: no npm, no build,
+#   no scripts. The base-branch guard only reads its files, and rejects
+#   symbolic links without following them.
+# - Restricted terms come from the GUARD_TERMS secret and are never printed.
+name: Interop guard
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: interop-guard-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: Interop/IP guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout base branch (trusted guard)
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: base
+          persist-credentials: false
+
+      - name: Checkout code to scan (data only, never executed)
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          path: pr
+          persist-credentials: false
+
+      - name: Unit-test the guard
+        run: node --test base/scripts/tests/*.test.mjs
+
+      - name: Scan
+        env:
+          GUARD_TERMS: ${{ secrets.GUARD_TERMS }}
+        # --require-terms: fail closed if the GUARD_TERMS secret is ever empty or deleted.
+        run: node base/scripts/check-interop-guard.mjs pr --require-terms

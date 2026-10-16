@@ -1,0 +1,10 @@
+facility_id,name,operator,facility_type,city,province_state,country,sector,cell_id,secondary_cell_ids,source_id,is_synthetic,as_of,notes
+FA-01,Canadian Forces Health Services Training Centre,Department of National Defence,schoolhouse,Borden,ON,CA,defence,INF-M9,,SRC-06,0,2026-10-10,At CFB Borden.
+FA-02,Canadian Forces Trauma Training Centre West,Department of National Defence,embedded-civilian-hospital,Vancouver,BC,CA,defence,INF-M9,,SRC-07,0,2026-10-10,Director is a Vancouver General Hospital trauma surgeon; the source does not state the centre's physical location.
+FA-03,Canadian Forces Trauma Training Centre (Montreal),Department of National Defence,embedded-civilian-hospital,Montreal,QC,CA,defence,INF-M9,,SRC-07,0,2026-10-10,Host hospital not named in the source.
+SYN-FA01,Synthetic Centre A (regional hospital simulation centre),Synthetic operator,simulation-centre,,,CA,civilian,INF-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+SYN-FA02,Synthetic Centre B (university simulation laboratory),Synthetic operator,simulation-centre,,,CA,civilian,INF-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+SYN-FA03,Synthetic Centre C (mobile simulation unit),Synthetic operator,mobile,,,CA,dual-use,INF-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+SYN-FA04,Synthetic Centre D (field training site),Synthetic operator,field-site,,,CA,defence,INF-M9,,,1,2026-10-10,Synthetic. Stress-test row only.
+FA-05,OrbitLab mobile training lab,North American Space Institute,mobile,,,CA,civilian,INF-M9,INF-M7,SRC-38,0,2026-10-11,Provider describes a mobile cleanroom lab with immersive simulation.
+SYN-FA05,Synthetic propulsion test site,Synthetic operator,test-site,,,CA,civilian,INF-M9,INF-M7,,1,2026-10-11,Synthetic. No public inventory of Canadian propulsion test assets exists.

@@ -1,0 +1,72 @@
+- name: bug
+  color: "d73a4a"
+  description: Something isn't working
+- name: enhancement
+  color: "a2eeef"
+  description: New feature or request
+- name: survey
+  color: "0e8a16"
+  description: Survey instrument, method or governance change
+- name: triage
+  color: "ededed"
+  description: Needs initial review to confirm scope and severity
+- name: workstream:ontology
+  color: "5319e7"
+  description: Object / link / property / action grammar
+- name: workstream:registry
+  color: "5319e7"
+  description: The validated entity and relationship database
+- name: workstream:dashboard
+  color: "5319e7"
+  description: Query and visualization layer
+- name: workstream:decision-engine
+  color: "5319e7"
+  description: Build-partner-buy determination framework
+- name: governance
+  color: "fbca04"
+  description: CI, templates, licensing, CLA, or repo policy
+- name: handling-review
+  color: "b60205"
+  description: Flagged by the data-handling guard or a maintainer for classification review
+- name: mapping
+  color: "0e8a16"
+  description: Supplier, dependency, or chokepoint contribution
+- name: good first issue
+  color: "7057ff"
+  description: Good for newcomers
+- name: question
+  color: "d876e3"
+  description: Further information is requested
+- name: wontfix
+  color: "ffffff"
+  description: This will not be worked on
+- name: bounty
+  color: "0e8a16"
+  description: Scoped issue with a nominal value in the deferred ledger (see BOUNTIES.md)
+- name: bounty:starter
+  color: "c2e0c6"
+  description: Bounty tier - documentation, tests, data-quality fixes
+- name: bounty:standard
+  color: "c2e0c6"
+  description: Bounty tier - connector, parser, schema extension
+- name: bounty:major
+  color: "c2e0c6"
+  description: Bounty tier - module, benchmark component, validated dataset
+- name: bounty:expert
+  color: "c2e0c6"
+  description: Bounty tier - domain model review, adversarial report, High or Critical finding
+- name: red-team
+  color: "b60205"
+  description: Analytical or evidence finding under the red-team programme (see RED-TEAM.md)
+- name: scope-review
+  color: "b60205"
+  description: Flagged for review against CONTRIBUTION-SCOPE.md
+- name: founding-cohort
+  color: "1d76db"
+  description: Work counting toward a founding contributor seat
+- name: blocked
+  color: "e4e669"
+  description: Waiting on a dependency that must merge first; cannot be claimed yet
+- name: ai-assisted
+  color: "bfdadc"
+  description: Contribution discloses AI assistance (named human operator accepted the CLA)

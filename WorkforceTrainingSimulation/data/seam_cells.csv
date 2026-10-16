@@ -1,0 +1,61 @@
+cell_id,layer_code,layer,layer_index,capability_code,capability,capability_index
+APP-M1,APP,Applications,1,M1,Aerospace,1
+APP-M2,APP,Applications,1,M2,Ammunition,2
+APP-M3,APP,Applications,1,M3,Digital Systems,3
+APP-M4,APP,Applications,1,M4,In-Service Support,4
+APP-M5,APP,Applications,1,M5,Personnel Protection,5
+APP-M6,APP,Applications,1,M6,Sensors,6
+APP-M7,APP,Applications,1,M7,Space,7
+APP-M8,APP,Applications,1,M8,Specialized Manufacturing,8
+APP-M9,APP,Applications,1,M9,Training & Simulation,9
+APP-M10,APP,Applications,1,M10,Uncrewed & Autonomous,10
+SOV-M1,SOV,Sovereign Decision Layer,2,M1,Aerospace,1
+SOV-M2,SOV,Sovereign Decision Layer,2,M2,Ammunition,2
+SOV-M3,SOV,Sovereign Decision Layer,2,M3,Digital Systems,3
+SOV-M4,SOV,Sovereign Decision Layer,2,M4,In-Service Support,4
+SOV-M5,SOV,Sovereign Decision Layer,2,M5,Personnel Protection,5
+SOV-M6,SOV,Sovereign Decision Layer,2,M6,Sensors,6
+SOV-M7,SOV,Sovereign Decision Layer,2,M7,Space,7
+SOV-M8,SOV,Sovereign Decision Layer,2,M8,Specialized Manufacturing,8
+SOV-M9,SOV,Sovereign Decision Layer,2,M9,Training & Simulation,9
+SOV-M10,SOV,Sovereign Decision Layer,2,M10,Uncrewed & Autonomous,10
+MOD-M1,MOD,Models,3,M1,Aerospace,1
+MOD-M2,MOD,Models,3,M2,Ammunition,2
+MOD-M3,MOD,Models,3,M3,Digital Systems,3
+MOD-M4,MOD,Models,3,M4,In-Service Support,4
+MOD-M5,MOD,Models,3,M5,Personnel Protection,5
+MOD-M6,MOD,Models,3,M6,Sensors,6
+MOD-M7,MOD,Models,3,M7,Space,7
+MOD-M8,MOD,Models,3,M8,Specialized Manufacturing,8
+MOD-M9,MOD,Models,3,M9,Training & Simulation,9
+MOD-M10,MOD,Models,3,M10,Uncrewed & Autonomous,10
+INF-M1,INF,Infrastructure,4,M1,Aerospace,1
+INF-M2,INF,Infrastructure,4,M2,Ammunition,2
+INF-M3,INF,Infrastructure,4,M3,Digital Systems,3
+INF-M4,INF,Infrastructure,4,M4,In-Service Support,4
+INF-M5,INF,Infrastructure,4,M5,Personnel Protection,5
+INF-M6,INF,Infrastructure,4,M6,Sensors,6
+INF-M7,INF,Infrastructure,4,M7,Space,7
+INF-M8,INF,Infrastructure,4,M8,Specialized Manufacturing,8
+INF-M9,INF,Infrastructure,4,M9,Training & Simulation,9
+INF-M10,INF,Infrastructure,4,M10,Uncrewed & Autonomous,10
+CHI-M1,CHI,Chips,5,M1,Aerospace,1
+CHI-M2,CHI,Chips,5,M2,Ammunition,2
+CHI-M3,CHI,Chips,5,M3,Digital Systems,3
+CHI-M4,CHI,Chips,5,M4,In-Service Support,4
+CHI-M5,CHI,Chips,5,M5,Personnel Protection,5
+CHI-M6,CHI,Chips,5,M6,Sensors,6
+CHI-M7,CHI,Chips,5,M7,Space,7
+CHI-M8,CHI,Chips,5,M8,Specialized Manufacturing,8
+CHI-M9,CHI,Chips,5,M9,Training & Simulation,9
+CHI-M10,CHI,Chips,5,M10,Uncrewed & Autonomous,10
+ENE-M1,ENE,Energy,6,M1,Aerospace,1
+ENE-M2,ENE,Energy,6,M2,Ammunition,2
+ENE-M3,ENE,Energy,6,M3,Digital Systems,3
+ENE-M4,ENE,Energy,6,M4,In-Service Support,4
+ENE-M5,ENE,Energy,6,M5,Personnel Protection,5
+ENE-M6,ENE,Energy,6,M6,Sensors,6
+ENE-M7,ENE,Energy,6,M7,Space,7
+ENE-M8,ENE,Energy,6,M8,Specialized Manufacturing,8
+ENE-M9,ENE,Energy,6,M9,Training & Simulation,9
+ENE-M10,ENE,Energy,6,M10,Uncrewed & Autonomous,10

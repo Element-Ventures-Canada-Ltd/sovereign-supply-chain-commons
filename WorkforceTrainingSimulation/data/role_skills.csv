@@ -1,0 +1,7 @@
+link_id,mission_id,role_id,skill_id,basis,source_id,notes
+RS-05,DRM-01,RL-10,SK-11,inference,,EV inference: instrumented hot fire needs a qualified DAQ technician.
+RS-06,DRM-01,RL-12,SK-12,source,SRC-40,
+RS-07,DRM-01,RL-12,SK-10,inference,,EV inference: safety officer reviews the hazard analysis.
+RS-08,DRM-01,RL-11,SK-13,source,SRC-42,
+RS-09,DRM-01,RL-13,SK-13,inference,,EV inference: weld inspection on pressure hardware.
+RS-10,DRM-01,RL-09,SK-14,inference,,"EV inference: flight-hardware handling, nearest public curriculum is SRC-36."

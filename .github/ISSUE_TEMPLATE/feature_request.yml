@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an enhancement to the ontology, registry, dashboard, or decision-engine
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Workstream
+      options:
+        - Ontology
+        - Registry
+        - Dashboard
+        - Decision-Engine
+        - Repo governance / CI
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
