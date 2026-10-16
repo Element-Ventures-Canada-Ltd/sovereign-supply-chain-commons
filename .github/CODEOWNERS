@@ -1,27 +1,65 @@
+# CODEOWNERS - sovereign-supply-chain-commons (public repository)
 # Handling: Unclassified — working
-# Red-zone map. Owned by @TLS-sys = RED (needs TRM approval). No owner = GREEN (auto-merges on green checks).
-# Last matching line wins. Default red; named areas green; sensitive files back to red.
+# The merge gate reads this file from main. Any pull request that changes a
+# path below is held until the owner merges it. Everything else (Dashboard/,
+# Engagement/, Survey/ outside the lines below, examples/, the marketplace
+# module's code, the Workforce module's code and docs) follows the normal
+# pull request + automated checks path. Pull requests from forks never
+# auto-merge, whatever they touch.
 
-*                                   @TLS-sys
+# Automation, guards and ownership
+/.github/ @TLS-sys
+/.claude/ @TLS-sys
+/.gitignore @TLS-sys
+/CLAUDE.md @TLS-sys
+**/CLAUDE.md @TLS-sys
+/Agents/ @TLS-sys
+/scripts/ @TLS-sys
 
-/Dashboard/
-/Engagement/
-/Survey/
-/examples/
-/modules/turbopump-marketplace/
-
-/Dashboard/openchokepoint.pin       @TLS-sys
-**/requirements*.txt                @TLS-sys
-**/pyproject.toml                   @TLS-sys
-**/package.json                     @TLS-sys
-**/package-lock.json                @TLS-sys
-/Survey/data-feeds/                 @TLS-sys
+# Real-entity data and plans (public records only, maintainer-cleared)
 /modules/turbopump-marketplace/data/ @TLS-sys
-/Survey/CONSENT.md                  @TLS-sys
-/Survey/GOVERNANCE.md               @TLS-sys
-**/manifest*.yaml                   @TLS-sys
-**/manifest*.yml                    @TLS-sys
-/.github/                           @TLS-sys
-/Agents/                            @TLS-sys
-/CLAUDE.md                          @TLS-sys
-**/CLAUDE.md                        @TLS-sys
+/WorkforceTrainingSimulation/data/ @TLS-sys
+/WorkforceTrainingSimulation/tools/ @TLS-sys
+/WorkforceTrainingSimulation/provenance.yaml @TLS-sys
+/Survey/data-feeds/ @TLS-sys
+/Survey/CONSENT.md @TLS-sys
+/Survey/GOVERNANCE.md @TLS-sys
+/project/ @TLS-sys
+/adapters/ @TLS-sys
+
+# Dependencies and pins
+**/requirements*.txt @TLS-sys
+**/pyproject.toml @TLS-sys
+**/package.json @TLS-sys
+**/package-lock.json @TLS-sys
+**/manifest*.yaml @TLS-sys
+**/manifest*.yml @TLS-sys
+/Dashboard/openchokepoint.pin @TLS-sys
+
+# Handling, scope and security
+/HANDLING.md @TLS-sys
+/CONTRIBUTION-SCOPE.md @TLS-sys
+/DATA-CONTRIBUTIONS.md @TLS-sys
+/SECURITY.md @TLS-sys
+/RED-TEAM.md @TLS-sys
+/RED-TEAM-REGISTER.md @TLS-sys
+
+# Legal, licensing and contributor terms
+/LICENSE @TLS-sys
+/MODEL-LICENSE.md @TLS-sys
+/NOTICE @TLS-sys
+/TRADEMARKS.md @TLS-sys
+/CLA.md @TLS-sys
+/CCLA.md @TLS-sys
+/BOUNTIES.md @TLS-sys
+/CHALLENGE.md @TLS-sys
+/LEDGER.md @TLS-sys
+/ACKNOWLEDGEMENTS.md @TLS-sys
+/FEEDBACK.md @TLS-sys
+
+# Governance and public positioning
+/GOVERNANCE.md @TLS-sys
+/MAINTAINERS.md @TLS-sys
+/CODE_OF_CONDUCT.md @TLS-sys
+/CONTRIBUTING.md @TLS-sys
+/README.md @TLS-sys
