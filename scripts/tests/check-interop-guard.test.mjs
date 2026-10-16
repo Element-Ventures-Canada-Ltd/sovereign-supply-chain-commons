@@ -1,6 +1,6 @@
 // Handling: Unclassified — working
 // Tests for scripts/check-interop-guard.mjs. Run: node --test scripts/tests/*.test.mjs
-// SDK-like strings are assembled at runtime so this file never trips the guard itself.
+// Vendor tokens are synthetic (`vendorx`); real ones live only in the GUARD_TERMS secret.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
@@ -10,11 +10,12 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const GUARD = join(dirname(fileURLToPath(import.meta.url)), '..', 'check-interop-guard.mjs');
-const SDK_REF = `"${'@' + 'osdk'}/client"`;
-const SDK_REPO = 'github' + ':palantir/x';
+const SDK_TERMS = 'sdk:vendorx';
+const SDK_REF = '"@vendorx/client"';
+const SDK_REPO = 'github:vendorx/x';
 
 // files: { path: body }. git: null (plain folder), or { add: [paths to commit, forced] }.
-function run(files, git = null) {
+function run(files, git = null, { terms = SDK_TERMS, args = [] } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'interop-guard-'));
   try {
     for (const [rel, body] of Object.entries(files)) {
@@ -26,7 +27,7 @@ function run(files, git = null) {
       g('init', '-q');
       for (const p of git.add) g('add', '-f', p);
     }
-    const r = spawnSync(process.execPath, [GUARD, dir], { encoding: 'utf8', env: { ...process.env, GUARD_TERMS: '' } });
+    const r = spawnSync(process.execPath, [GUARD, dir, ...args], { encoding: 'utf8', env: { ...process.env, GUARD_TERMS: terms } });
     return { code: r.status, out: r.stdout + r.stderr };
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -99,4 +100,35 @@ test('a handling label other than UNCLASSIFIED is still rejected', () => {
   const r = run({ 'notes.md': `Marking: ${label}\n` });
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /handling label other than UNCLASSIFIED/);
+});
+
+test('an SDK vendor token from the secret is rejected anywhere in text', () => {
+  const r = run({ 'notes.md': 'Built on VendorX tooling.\n' });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /proprietary SDK reference/);
+});
+
+test('a package.json dependency on an SDK vendor package is rejected', () => {
+  const r = run({ 'package.json': JSON.stringify({ dependencies: { '@vendorx/sdk': '1.0.0' } }) });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /proprietary SDK dependency/);
+});
+
+test('sdk: lines are not treated as restricted terms, and plain lines still are', () => {
+  const r = run({ 'a.md': 'the word sdk:vendorx is never written here\nProject Zeta\n' }, null, { terms: 'sdk:vendory\nProject Zeta' });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /restricted reference found \(term #1\)/);
+  assert.doesNotMatch(r.out, /proprietary SDK/);
+});
+
+test('--require-terms refuses to pass when the secret has no sdk: lines', () => {
+  const r = run({ 'a.md': 'ok\n' }, null, { terms: 'Project Zeta', args: ['--require-terms'] });
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /no sdk: lines/);
+});
+
+test('--require-terms passes a clean tree when both kinds of entry are present', () => {
+  const r = run({ 'a.md': 'Handling: Unclassified — working\n' }, null, { terms: 'sdk:vendorx\nProject Zeta', args: ['--require-terms'] });
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /1 restricted terms, 1 SDK tokens checked/);
 });

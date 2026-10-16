@@ -41,7 +41,7 @@ class Zones(unittest.TestCase):
             self.assertZone(p, False)
 
     def test_red_default_and_root(self):
-        for p in ["CLA.md", "README.md", "adapters/gotham/SPEC.md", "newdir/file.py", "LICENSE"]:
+        for p in ["CLA.md", "README.md", "adapters/vendor-x/SPEC.md", "newdir/file.py", "LICENSE"]:
             self.assertZone(p, True)
 
     def test_red_inside_green(self):
