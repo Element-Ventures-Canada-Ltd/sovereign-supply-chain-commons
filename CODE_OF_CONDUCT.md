@@ -42,7 +42,7 @@ This Code of Conduct applies within all community spaces associated with this re
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the maintainers listed in MAINTAINERS.md. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the maintainers at tleroy@elementventureslp.com. All complaints will be reviewed and investigated promptly and fairly.
 
 ## Attribution
 

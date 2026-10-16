@@ -25,6 +25,9 @@ New here? Read HANDLING.md, CONTRIBUTION-SCOPE.md, and the CLA, then look for is
 | Dashboard/ | The query and visualization layer for capability-gap and dependency analysis |
 | Engagement/ | Client-agnostic engagement workflow: solicitation, delivery gates, acceptance, reporting |
 | Survey/ | The recurring sovereign supply chain survey: questionnaire, method, governance and tooling |
+| modules/turbopump-marketplace/ | First reference module: supplier registry, RFQ matching and control-tower view for the Canadian supply chain of a small liquid-rocket turbopump, built from public records |
+| Agents/ | Automated checks for feeds, contributions and supplier records |
+| examples/ | Synthetic datasets only |
 | WorkforceTrainingSimulation/ | Public, cited reference data on training programs, simulation facilities, skills retention, workforce roles and the enabling policy environment, organised on the Sovereign Seam |
 
 The core components — ontology, registry, and decision engine — are © 2026 T. Leroy Smith, exclusively licensed to Element Ventures (Canada) Ltd., and maintained in a separate private repository. See CONTRIBUTING.md for the two-tier model.
