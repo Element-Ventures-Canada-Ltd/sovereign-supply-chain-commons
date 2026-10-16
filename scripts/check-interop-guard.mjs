@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Handling: Unclassified — working
 // Interop and IP guard for the open tier. Fails CI when:
-// 1. a proprietary third-party platform SDK package is referenced: their licences bar redistribution;
+// 1. a proprietary third-party platform SDK package is referenced: their licences bar redistribution
+//    (vendor tokens come from `sdk:` lines in the GUARD_TERMS secret, never the repo);
 // 2. restricted engagement references appear (terms come from the GUARD_TERMS secret, never the repo);
 // 3. a file carries a handling label (an upper-case marking, double slash, category) other than UNCLASSIFIED // PUBLIC;
 // 4. a binary document type that could carry technical drawings is added (fail closed);
@@ -25,16 +26,19 @@ const TEXT = new Set(['.js', '.mjs', '.cjs', '.ts', '.tsx', '.jsx', '.json', '.y
 const BLOCKED = new Set(['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.zip', '.7z', '.tar', '.gz', '.step', '.stp', '.iges', '.igs', '.dwg', '.dxf', '.stl', '.sldprt', '.x_t']);
 const IMAGES = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico', '.woff', '.woff2']);
 
-const SDK_NAME = /^(@anduril\/|anduril-lattice|lattice-sdk|@osdk\/|@palantir\/|foundry-platform-sdk|palantir-)/i;
-const SDK_TEXT = [
-  /["'`](?:npm:)?(@anduril\/[\w-]+|anduril-lattice[\w-]*|lattice-sdk[\w-]*)["'`@]/i,
-  /["'`](?:npm:)?(@osdk\/[\w-]+|@palantir\/[\w-]+|foundry-platform-sdk[\w-]*)["'`@]/i,
-  /github:(anduril|palantir)\//i,
-  /^\s*(import|from)\s+(anduril|palantir|foundry_sdk)\b/im,
-];
 // Any upper-case marking-double-slash-category label shape is checked; only UNCLASSIFIED is allowed.
 const LABEL = /\b([A-Z][A-Z-]+(?: [A-Z][A-Z-]+)*)\s*\/\/\s*[A-Z]{2,}/g;
-const terms = (process.env.GUARD_TERMS || '').split('\n').map((s) => s.trim()).filter(Boolean);
+// GUARD_TERMS: one entry per line. A line starting `sdk:` names a proprietary SDK vendor token;
+// every other line is a restricted reference. Both are matched case-insensitively.
+const lines = (process.env.GUARD_TERMS || '').split('\n').map((s) => s.trim()).filter(Boolean);
+const isSdk = (l) => /^sdk:/i.test(l);
+const sdkTokens = lines.filter(isSdk).map((l) => l.slice(4).trim().toLowerCase()).filter(Boolean);
+const terms = lines.filter((l) => !isSdk(l));
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Package names: `@token/...` or `token` followed by a non-alphanumeric character or the end.
+const SDK_NAME = sdkTokens.length
+  ? new RegExp(`^(?:${sdkTokens.map((t) => `@${esc(t)}/|${esc(t)}(?![a-z0-9])`).join('|')})`, 'i')
+  : null;
 
 const failures = [];
 const fail = (rel, msg) => failures.push(`${rel}: ${msg}`);
@@ -50,7 +54,7 @@ function checkPackageJson(rel, text) {
   let pkg; try { pkg = JSON.parse(text); } catch { return fail(rel, 'invalid JSON'); }
   for (const field of ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies', 'bundledDependencies']) {
     for (const [name, spec] of Object.entries(pkg[field] || {})) {
-      if (SDK_NAME.test(name) || SDK_NAME.test(String(spec).replace(/^npm:/, ''))) fail(rel, `proprietary SDK dependency "${name}" — move the adapter out of the open repo`);
+      if (SDK_NAME && (SDK_NAME.test(name) || SDK_NAME.test(String(spec).replace(/^npm:/, '')))) fail(rel, `proprietary SDK dependency "${name}" — move the adapter out of the open repo`);
     }
   }
 }
@@ -87,7 +91,8 @@ function walk(dir) {
     if (!TEXT.has(ext)) { fail(rel, `unrecognised file type ${ext || '(none)'}; add it to the guard after review`); continue; }
     if (st.size > 5_000_000) { fail(rel, 'text file over 5 MB'); continue; }
     const text = readFileSync(p, 'utf8');
-    for (const re of SDK_TEXT) if (re.test(text)) fail(rel, 'proprietary SDK reference — move the adapter out of the open repo');
+    const lower = text.toLowerCase();
+    if (sdkTokens.some((t) => lower.includes(t))) fail(rel, 'proprietary SDK reference — move the adapter out of the open repo');
     for (const m of text.matchAll(LABEL)) if (m[1] !== 'UNCLASSIFIED') { fail(rel, 'handling label other than UNCLASSIFIED // PUBLIC'); break; }
     terms.forEach((t, i) => { if (text.toLowerCase().includes(t.toLowerCase())) fail(rel, `restricted reference found (term #${i + 1})`); });
     if (name === 'package.json') checkPackageJson(rel, text);
@@ -99,9 +104,13 @@ if (requireTerms && terms.length === 0) {
   console.error('Interop/IP guard: GUARD_TERMS is empty but --require-terms was set. Refusing to pass.');
   process.exit(1);
 }
+if (requireTerms && sdkTokens.length === 0) {
+  console.error('Interop/IP guard: GUARD_TERMS has no sdk: lines but --require-terms was set. Refusing to pass.');
+  process.exit(1);
+}
 walk(root);
 if (failures.length) {
   console.error(`Interop/IP guard: ${failures.length} problem(s)\n` + failures.map((f) => ` - ${f}`).join('\n'));
   process.exit(1);
 }
-console.log(`Interop/IP guard: clean (${terms.length} restricted terms checked)`);
+console.log(`Interop/IP guard: clean (${terms.length} restricted terms, ${sdkTokens.length} SDK tokens checked)`);
