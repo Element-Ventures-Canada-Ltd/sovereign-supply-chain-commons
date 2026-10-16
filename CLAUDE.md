@@ -22,7 +22,6 @@ nothing here may depend on, describe, or reconstruct them.
 | `Agents/` | SOI Graph Agents: Feed, Contribution and Supplier checks (red zone) |
 | `examples/` | Synthetic datasets only |
 | `modules/turbopump-marketplace/` | Open-tier marketplace module (code green; `data/` red) |
-| `project/turbopump/` | Plan, milestones and issue bootstrap (red zone) |
 | `.claude/` | Claude Code settings, hooks, guard and commands (red zone) |
 | `.github/scripts/` | Guards: data handling, scope, red zone, AI-author gate (red zone) |
 
@@ -153,7 +152,6 @@ each step matters.
 | `/check` | Run the checks that match the files you changed, before any PR |
 | `/ship` | Branch, check, commit as the owner, then, after the owner says yes, push and open the PR (auto-tags `[RED]` from CODEOWNERS) |
 | `/fix-cla` | Diagnose a failing CLA check and give the exact fix |
-| `/slice` | Score the current two-week slice against `project/turbopump/plan.json` |
 
 The guard runs before every shell command and every GitHub tool call. It blocks
 pushes to `main`, force pushes, history rewrites, merging or approving PRs,

@@ -20,9 +20,9 @@ each matters. Read only; change nothing.
      <noreply@anthropic.com>` (or any account other than the owner), the cause
      is the commit identity, not the signature. Point to `/fix-cla`.
    - Any other check: name the failing step from the job log in one line.
-4. **Plan position.** Read `project/turbopump/plan.json` and the repository
-   milestones. Say which milestone is next, its due date and days left, and how
-   many of its issues are closed.
+4. **Plan position.** Read the repository's open milestones (the delivery plan
+   itself is held privately). If one is open, say its title, due date, days left
+   and how many of its issues are closed; if none is open, say so.
 5. **Report** in this shape:
 
 ```
