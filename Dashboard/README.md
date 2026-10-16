@@ -3,8 +3,9 @@ Handling: Unclassified — working
 # Dashboard
 
 The query and visualization layer for capability-gap and dependency
-analysis — the interface analysts and decision-makers use to explore the
-[Registry](../Registry/README.md) against the [Ontology](../Ontology/README.md).
+analysis — the interface analysts and decision-makers use to explore a
+supply-chain registry. The registry, ontology and decision engine are
+maintained in a separate private repository and are not part of this one.
 
 ## What works today (preview)
 
@@ -55,7 +56,7 @@ request that touches `Dashboard/`, and attaches sample pages to the run.
 - Query interface over the registry (filtering, search, graph traversal)
 - Visualizations for dependency concentration, capability gaps, and
   workforce/capacity constraints
-- Export/reporting views feeding the [Decision-Engine](../Decision-Engine/README.md)
+- Export and reporting views
 
 ## Contributing
 

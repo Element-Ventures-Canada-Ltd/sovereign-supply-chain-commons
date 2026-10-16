@@ -11,7 +11,10 @@ than opening a public issue.
 
 Do not open a public GitHub issue for security reports.
 
-Contact the maintainers listed in MAINTAINERS.md directly.
+Report it privately through GitHub: open the repository's **Security** tab and
+choose **Report a vulnerability**. If you cannot use GitHub, email
+tleroy@elementventureslp.com with "Security" in the subject line.
+
 Please include:
 
 - A description of the vulnerability and its potential impact

@@ -8,6 +8,11 @@ Handling: Unclassified — working
 
 Maintainers are responsible for: reviewing and merging pull requests, triaging issues, enforcing the Code of Conduct, and confirming HANDLING.md compliance before merge.
 
+## Contact
+
+- General and Code of Conduct reports: tleroy@elementventureslp.com
+- Security vulnerabilities: see SECURITY.md (private report through GitHub preferred)
+
 ## Response times
 
 Maintainers aim to give a first reply to new issues and pull requests within 3 business days. This is a target, not a guarantee.
