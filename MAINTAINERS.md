@@ -62,7 +62,7 @@ Pull requests from forks are approved the same way but never auto-merge: press *
 
 Security rules these workflows follow: they run on `pull_request_target` from `main` and check out `main` only, never the pull request's code; every action is pinned to a full commit SHA; each job asks for only the permissions it uses (`statuses` for the check, `pull-requests` for labels and the comment, `contents` only to switch auto-merge on or off). Untrusted text (file paths, titles) is read through the API and escaped before it goes into the comment.
 
-Known limit: anyone with **write** access to this repository could, in principle, post a fake `owner-approval` status from their own workflow. The required check is pinned to the GitHub Actions app, the gate ignores statuses not posted by `github-actions[bot]`, and write access is held by the owner only. Keep it that way. Claude Code sessions act under the owner's account, so they must never add the `owner-approved` label.
+Known limit: anyone with **write** access to this repository could, in principle, post a fake `owner-approval` status from their own workflow. The required check is pinned to the GitHub Actions app, the gate ignores statuses not posted by `github-actions[bot]`, and write access is held by the owner only. Keep it that way. Claude Code sessions act under the owner's account, so they must never add the `owner-approved` label. The session guard (`.claude/hooks/guard.py`) blocks this for `gh` commands and GitHub tool calls. It cannot see a browser, so never let an assistant click the label for you in GitHub's web page.
 
 ### One-time ruleset setup
 

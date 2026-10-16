@@ -8,7 +8,8 @@ repository's git rules mechanical rather than a matter of discipline:
   deny  - irreversible or owner-only actions: committing on `main`, pushing to
           `main`, force pushes, history rewrites, merging or approving pull
           requests, secrets, variables, rulesets, releases, repo settings,
-          tokens, and any commit made under an identity other than the owner's.
+          tokens, any commit made under an identity other than the owner's, and
+          adding the `owner-approved` label (the owner's approval signal).
   ask   - actions that change shared state: any push, opening a pull request,
           deleting files or branches, rebase, hard reset, package installs.
   allow - everything else.
@@ -25,6 +26,9 @@ import subprocess
 import sys
 
 PROTECTED = {"main", "master"}
+APPROVAL_LABEL = "owner-approved"
+APPROVAL_DENY = ("The `owner-approved` label is the owner's approval. Sessions act under the "
+                 "owner's account, so only the owner adds it, by hand, on GitHub.")
 FORCE_FLAGS = {"-f", "--force", "--force-with-lease", "--force-if-includes",
                "--mirror", "--delete", "-d", "--tags", "--prune", "--all"}
 
@@ -191,6 +195,28 @@ def check_git(toks, ctx):
     return "allow", ""
 
 
+def _mentions_approval(text):
+    """True if text names the approval label, ignoring case, quotes and separators."""
+    norm = re.sub(r"[\s'\"`]", "", str(text)).lower()
+    return APPROVAL_LABEL in norm
+
+
+ADD_LABEL_FLAGS = {"--add-label", "--label", "-l"}
+
+
+def _adds_approval_label(rest):
+    """True if a `gh pr|issue` argument list adds the approval label."""
+    for i, t in enumerate(rest):
+        flag, eq, val = t.partition("=")
+        if flag in ADD_LABEL_FLAGS:
+            val = val if eq else (rest[i + 1] if i + 1 < len(rest) else "")
+            if _mentions_approval(val):
+                return True
+        elif re.match(r"^-l.", t) and _mentions_approval(t[2:]):  # -lowner-approved
+            return True
+    return False
+
+
 # ---------------------------------------------------------------- gh
 
 def check_gh(toks):
@@ -199,6 +225,10 @@ def check_gh(toks):
         return "allow", ""
     grp, rest = args[0], args[1:]
     verb = rest[0] if rest else ""
+    if grp in ("pr", "issue") and verb not in ("list", "view", "status") and _adds_approval_label(rest):
+        return "deny", APPROVAL_DENY
+    if grp == "label" and verb not in ("list", "") and _mentions_approval(" ".join(rest)):
+        return "deny", APPROVAL_DENY
     if grp == "pr":
         if verb == "merge":
             if "--auto" in rest:
@@ -268,6 +298,9 @@ def check_bash(command, ctx):
 def check_mcp(tool, inp):
     name = tool.split("__")[-1]
     blob = json.dumps(inp).upper()
+    read_only = name.startswith(("get_", "list_", "search_")) or name.endswith("_read")
+    if not read_only and _mentions_approval(json.dumps(inp)):
+        return "deny", APPROVAL_DENY
     if name == "merge_pull_request":
         return "deny", "Never merge a pull request; merging is the owner's."
     if name == "pull_request_review_write" and "APPROVE" in blob:
