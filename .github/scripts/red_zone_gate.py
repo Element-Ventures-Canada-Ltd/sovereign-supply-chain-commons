@@ -1,32 +1,63 @@
 # Handling: Unclassified — working
-"""Red zone gate.
+"""Red zone gate and owner approval.
 
-Fails a pull request that changes any red-zone path, so that it can merge only
-through the repository owner's logged ruleset bypass. Green-only pull requests
-pass and can auto-merge.
+A pull request that changes a red-zone path waits for the repository owner.
+It does not fail. The gate reports a commit status called `owner-approval`:
+
+  green PR                         -> success
+  red PR, not yet approved         -> pending (and the zone:red label)
+  red PR, owner added the label    -> success for that exact commit
+  new commits pushed               -> label removed, back to pending
+
+The ruleset on main requires `owner-approval`, so a red pull request merges
+only after the owner approves the commit that is actually being merged.
 
 Zones come from .github/CODEOWNERS on the BASE branch: a path whose last
 matching CODEOWNERS line names an owner is red; a path whose last matching
 line has no owner is green; a path no line matches is red (fail closed).
+Anything under .github/ and any CODEOWNERS file is always red. A title or
+description containing [RED] is red too.
 
-Why this exists: GitHub does not require code-owner review when the pull
-request author is the code owner, and every pull request here is authored by
-the owner's account. Code-owner review alone therefore never blocks.
+Commands (one per workflow event):
+  gate      Red zone workflow: opened, synchronize, reopened, edited, ...
+  approve   Owner approval workflow: the owner-approved label was added
+  revoke    Owner approval workflow: the owner-approved label was removed
+  classify  merge-gate: print red=true|false to GITHUB_OUTPUT, change nothing
 
-Uses only the GitHub REST API and the base-branch checkout. Never checks out or
-runs pull request code.
+Each command posts or updates one summary comment; it never posts a second.
+Exit code 1 means a real error (API failure, missing CODEOWNERS), never
+"red". Uses only the GitHub REST/GraphQL API and the base-branch checkout.
+Never checks out or runs pull request code.
 """
 from __future__ import annotations
 
+import datetime as dt
+import html
 import json
 import os
 import re
 import sys
+import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
 CODEOWNERS = Path(".github/CODEOWNERS")
 
+OWNER_LOGIN = "TLS-sys"
+OWNER_ID = 330289023  # numeric account id; a renamed or re-registered login does not match
+CONTEXT = "owner-approval"
+APPROVED_LABEL = "owner-approved"
+RED_LABEL = "zone:red"
+GREEN_LABEL = "zone:green"
+BOT = "github-actions[bot]"
+MARKER = "<!-- owner-approval-gate -->"
+APPROVED_PREFIX = f"Approved by {OWNER_LOGIN} at "
+ALWAYS_RED = re.compile(r"^\.github/|(^|/)CODEOWNERS$")
+MAX_LISTED = 50
+
+
+# ---------------------------------------------------------------- zones
 
 def pattern_to_regex(pattern: str) -> re.Pattern[str]:
     """Translate a CODEOWNERS (gitignore-style) pattern into a regex."""
@@ -78,45 +109,359 @@ def is_red(path: str, rules: list[tuple[re.Pattern[str], bool]]) -> bool:
     return verdict
 
 
-def changed_paths(repo: str, pr: str, token: str) -> list[str]:
-    paths, page = [], 1
-    while True:
-        req = urllib.request.Request(
-            f"https://api.github.com/repos/{repo}/pulls/{pr}/files?per_page=100&page={page}",
-            headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
-        )
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            batch = json.load(resp)
-        for f in batch:
+def red_paths(paths: list[str], rules: list[tuple[re.Pattern[str], bool]]) -> list[str]:
+    return sorted({p for p in paths if ALWAYS_RED.search(p) or is_red(p, rules)})
+
+
+def marked_red(title: str | None, body: str | None) -> bool:
+    return "[RED]" in (title or "") or "[RED]" in (body or "")
+
+
+# ---------------------------------------------------------------- comment
+
+def safe(text: str, limit: int = 200) -> str:
+    """Untrusted text (file paths, logins) rendered inert inside the comment."""
+    text = re.sub(r"[\x00-\x1f\x7f]", "?", str(text))[:limit]
+    return html.escape(text, quote=True).replace("`", "&#96;")
+
+
+def render_comment(state: str, red: list[str], marked: bool, sha: str,
+                   run_url: str = "", detail: str = "") -> str:
+    """One comment body. state: green|pending|approved|reset|refused|revoked|stale."""
+    short = safe(sha[:7])
+    lines = [MARKER, "## Owner approval", ""]
+    if state == "green":
+        lines.append("**Zone: GREEN.** No red-zone paths changed. `owner-approval` is "
+                     "success; this pull request merges on its own once the required checks pass.")
+    else:
+        lines.append("**Zone: RED.** This pull request needs the repository owner's approval "
+                     "before it can merge.")
+        if marked:
+            lines.append("")
+            lines.append("The title or description is marked `[RED]`.")
+        lines.append("")
+        if state == "approved":
+            lines.append(f"**Status: approved.** {safe(detail)} Squash auto-merge merges it once "
+                         "the required checks pass. Any new commit clears this approval.")
+        else:
+            reason = {
+                "pending": "",
+                "reset": "New commits were pushed, so the earlier approval was cleared. ",
+                "refused": f"An approval was refused: {safe(detail)} ",
+                "revoked": "The `owner-approved` label was removed, so the approval was withdrawn. ",
+                "stale": "The `owner-approved` label is on this pull request but no approval is "
+                         "recorded for the latest commit. Remove the label and add it again. ",
+            }[state]
+            lines.append(f"**Status: waiting for the owner.** {reason}To approve, {OWNER_LOGIN} "
+                         f"reviews commit `{short}` and adds the `{APPROVED_LABEL}` label.")
+    if red:
+        listed = red[:MAX_LISTED]
+        lines += ["", f"<details><summary>Red paths ({len(red)})</summary>", ""]
+        lines += [f"- <code>{safe(p)}</code>" for p in listed]
+        if len(red) > len(listed):
+            lines.append(f"- … and {len(red) - len(listed)} more")
+        lines += ["", "</details>"]
+    footer = f"_Updated for commit `{short}`"
+    if run_url.startswith("https://"):
+        footer += f" · [workflow run]({run_url})"
+    lines += ["", footer + "_"]
+    return "\n".join(lines) + "\n"
+
+
+def approver_problem(login: str, user_id: str | int, permission: dict | None) -> str | None:
+    """Why this person may not approve, or None if they may."""
+    if (login or "").lower() != OWNER_LOGIN.lower():
+        return f"the label was added by {login or 'an unknown account'}, not {OWNER_LOGIN}."
+    if str(user_id) != str(OWNER_ID):
+        return f"the account that added the label is not {OWNER_LOGIN}'s registered account."
+    if not permission or permission.get("permission") != "admin":
+        return f"{OWNER_LOGIN} does not have admin permission on this repository."
+    if str((permission.get("user") or {}).get("id")) != str(OWNER_ID):
+        return "the permission check returned a different account."
+    return None
+
+
+# ---------------------------------------------------------------- GitHub API
+
+class ApiError(Exception):
+    pass
+
+
+class GitHub:
+    """The few REST/GraphQL calls the gate needs. Tests replace this class."""
+
+    def __init__(self, repo: str, token: str, api: str = "https://api.github.com"):
+        self.repo, self.token, self.api = repo, token, api
+
+    def _call(self, method: str, path: str, body=None, ok404: bool = False):
+        url = path if path.startswith("https://") else f"{self.api}/{path}"
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(url, data=data, method=method, headers={
+            "Authorization": f"Bearer {self.token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                raw = resp.read()
+        except urllib.error.HTTPError as exc:
+            if ok404 and exc.code == 404:
+                return None
+            raise ApiError(f"{method} {path}: HTTP {exc.code}") from None
+        except urllib.error.URLError as exc:
+            raise ApiError(f"{method} {path}: {exc.reason}") from None
+        return json.loads(raw) if raw else None
+
+    def _pages(self, path: str) -> list:
+        out, page = [], 1
+        sep = "&" if "?" in path else "?"
+        while True:
+            batch = self._call("GET", f"{path}{sep}per_page=100&page={page}") or []
+            out += batch
+            if len(batch) < 100:
+                return out
+            page += 1
+
+    def _r(self, rest: str) -> str:
+        return f"repos/{self.repo}/{rest}"
+
+    def get_pr(self, n):
+        return self._call("GET", self._r(f"pulls/{n}"))
+
+    def pr_files(self, n) -> list[str]:
+        paths = []
+        for f in self._pages(self._r(f"pulls/{n}/files")):
             paths.append(f["filename"])
             if f.get("previous_filename"):
                 paths.append(f["previous_filename"])  # moving a file out of red is red
-        if len(batch) < 100:
-            return paths
-        page += 1
+        return paths
+
+    def add_label(self, n, name):
+        self._call("POST", self._r(f"issues/{n}/labels"), {"labels": [name]})
+
+    def remove_label(self, n, name):
+        self._call("DELETE", self._r(f"issues/{n}/labels/{urllib.parse.quote(name, safe='')}"),
+                   ok404=True)
+
+    def ensure_label(self, name, color, description):
+        if self._call("GET", self._r(f"labels/{urllib.parse.quote(name, safe='')}"), ok404=True):
+            return
+        self._call("POST", self._r("labels"),
+                   {"name": name, "color": color, "description": description})
+
+    def statuses(self, sha) -> list[dict]:
+        return self._call("GET", self._r(f"commits/{sha}/statuses?per_page=100")) or []
+
+    def set_status(self, sha, state, description, target_url=""):
+        body = {"state": state, "context": CONTEXT, "description": description[:140]}
+        if target_url.startswith("https://"):
+            body["target_url"] = target_url
+        self._call("POST", self._r(f"statuses/{sha}"), body)
+
+    def comments(self, n) -> list[dict]:
+        return self._pages(self._r(f"issues/{n}/comments"))
+
+    def create_comment(self, n, body):
+        self._call("POST", self._r(f"issues/{n}/comments"), {"body": body})
+
+    def update_comment(self, comment_id, body):
+        self._call("PATCH", self._r(f"issues/comments/{comment_id}"), {"body": body})
+
+    def permission(self, login) -> dict | None:
+        return self._call("GET", self._r(
+            f"collaborators/{urllib.parse.quote(login, safe='')}/permission"), ok404=True)
+
+    def set_auto_merge(self, node_id, enable: bool):
+        if enable:
+            query = ("mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,"
+                     "mergeMethod:SQUASH}){clientMutationId}}")
+        else:
+            query = ("mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id})"
+                     "{clientMutationId}}")
+        result = self._call("POST", "graphql", {"query": query, "variables": {"id": node_id}})
+        if result and result.get("errors"):
+            raise ApiError("auto-merge: " + "; ".join(e.get("message", "?") for e in result["errors"]))
 
 
-def main() -> int:
-    repo, pr, token = os.environ["REPO"], os.environ["PR_NUMBER"], os.environ["GITHUB_TOKEN"]
-    if not CODEOWNERS.is_file():
-        print("::error::.github/CODEOWNERS missing on base branch; failing closed")
-        return 1
-    rules = parse_codeowners(CODEOWNERS.read_text(encoding="utf-8"))
-    red = sorted({p for p in changed_paths(repo, pr, token) if is_red(p, rules)})
-    lines = ["## Red zone gate", ""]
-    if red:
-        lines += ["**RED**: owner approval required (ruleset bypass). Red paths:", ""]
-        lines += [f"- `{p}`" for p in red]
-        for p in red:
-            print(f"::error file={p}::red-zone path; merge requires owner bypass")
+# ---------------------------------------------------------------- actions
+
+def upsert_comment(gh, n, body):
+    """Edit the gate's one comment in place; create it only if it does not exist."""
+    for c in gh.comments(n):
+        if (c.get("user") or {}).get("login") == BOT and MARKER in (c.get("body") or ""):
+            if c.get("body") != body:
+                gh.update_comment(c["id"], body)
+            return
+    gh.create_comment(n, body)
+
+
+def set_zone_labels(gh, n, labels, red):
+    want, drop = (RED_LABEL, GREEN_LABEL) if red else (GREEN_LABEL, RED_LABEL)
+    if want not in labels:
+        gh.add_label(n, want)
+    if drop in labels:
+        gh.remove_label(n, drop)
+
+
+def recorded_approval(gh, sha) -> dict | None:
+    """The latest owner-approval status on this commit, if it is an approval."""
+    for s in gh.statuses(sha):  # newest first
+        if s.get("context") == CONTEXT and (s.get("creator") or {}).get("login") == BOT:
+            ok = s.get("state") == "success" and (s.get("description") or "").startswith(APPROVED_PREFIX)
+            return s if ok else None
+    return None
+
+
+def approval_detail(sha, when) -> str:
+    return f"{OWNER_LOGIN} approved commit {sha} on {when}."
+
+
+def classify(gh, n, rules):
+    pr = gh.get_pr(n)
+    red = red_paths(gh.pr_files(n), rules)
+    marked = marked_red(pr.get("title"), pr.get("body"))
+    return pr, red, marked, bool(red or marked)
+
+
+def cmd_gate(gh, n, rules, action, run_url):
+    pr, red, marked, is_red_pr = classify(gh, n, rules)
+    sha = pr["head"]["sha"]
+    labels = {l["name"] for l in pr.get("labels", [])}
+    try:
+        gh.ensure_label(APPROVED_LABEL, "0e8a16", "Owner approved the latest commit of this red PR")
+    except ApiError as exc:
+        print(f"::warning::could not create the {APPROVED_LABEL} label: {exc}")
+
+    reset = False
+    if action == "synchronize" and APPROVED_LABEL in labels:
+        gh.remove_label(n, APPROVED_LABEL)  # an approval covers one commit only
+        labels.discard(APPROVED_LABEL)
+        reset = True
+    set_zone_labels(gh, n, labels, is_red_pr)
+
+    if not is_red_pr:
+        gh.set_status(sha, "success", "Green: no red-zone paths changed", run_url)
+        upsert_comment(gh, n, render_comment("green", [], False, sha, run_url))
+        print("GREEN: no red-zone paths changed.")
+        return 0
+
+    approval = recorded_approval(gh, sha) if APPROVED_LABEL in labels else None
+    if approval:
+        detail = approval_detail(sha, approval.get("created_at", ""))
+        upsert_comment(gh, n, render_comment("approved", red, marked, sha, run_url, detail))
+        print(f"RED, approved for {sha}; status left as success.")
+        return 0
+
+    gh.set_status(sha, "pending", f"Waiting for {OWNER_LOGIN}: add the {APPROVED_LABEL} label",
+                  run_url)
+    if pr.get("auto_merge"):
+        try:
+            gh.set_auto_merge(pr["node_id"], False)  # nothing red merges unapproved
+        except ApiError as exc:
+            print(f"::warning::could not turn off auto-merge: {exc}")
+    state = "reset" if reset else ("stale" if APPROVED_LABEL in labels else "pending")
+    upsert_comment(gh, n, render_comment(state, red, marked, sha, run_url))
+    print(f"RED: owner-approval pending for {sha}. Red paths: {len(red)}; marked [RED]: {marked}.")
+    return 0
+
+
+def cmd_approve(gh, n, rules, run_url, sender_login, sender_id, event_sha, now=None):
+    pr, red, marked, is_red_pr = classify(gh, n, rules)
+    sha = pr["head"]["sha"]
+    if pr.get("state") != "open":
+        print("Pull request is not open; nothing to approve.")
+        return 0
+
+    problem = approver_problem(sender_login, sender_id,
+                               gh.permission(sender_login) if sender_login else None)
+    if not problem and event_sha != sha:
+        problem = (f"the label was added while commit {event_sha[:7]} was the latest, but "
+                   f"{sha[:7]} has been pushed since. Review the latest commit and add the label again.")
+    if problem:
+        gh.remove_label(n, APPROVED_LABEL)
+        if is_red_pr:
+            gh.set_status(sha, "pending", "Approval refused; waiting for the owner", run_url)
+        upsert_comment(gh, n, render_comment("refused" if is_red_pr else "green",
+                                             red, marked, sha, run_url, problem))
+        print(f"::warning::approval refused: {problem}")
+        return 0
+
+    same_repo = ((pr.get("head") or {}).get("repo") or {}).get("full_name") == gh.repo
+    note = ""
+    if not same_repo:
+        note = " Pull requests from forks never auto-merge: the owner merges this one by hand."
+    elif pr.get("draft"):
+        note = " It is still a draft, so auto-merge is off until it is marked ready."
     else:
-        lines.append("**GREEN**: no red-zone paths changed.")
-    summary = os.environ.get("GITHUB_STEP_SUMMARY")
-    if summary:
-        with open(summary, "a", encoding="utf-8") as fh:
-            fh.write("\n".join(lines) + "\n")
-    print("\n".join(lines))
-    return 1 if red else 0
+        # Before the success status: GitHub refuses auto-merge on a PR that is
+        # already mergeable, and this order also means nothing merges if this fails.
+        try:
+            gh.set_auto_merge(pr["node_id"], True)
+        except ApiError as exc:
+            note = " Auto-merge could not be turned on; the owner can merge it by hand."
+            print(f"::warning::could not turn on auto-merge: {exc}")
+
+    when = (now or dt.datetime.now(dt.timezone.utc)).strftime("%Y-%m-%d %H:%M UTC")
+    gh.set_status(sha, "success", f"{APPROVED_PREFIX}{sha[:7]}", run_url)
+    detail = approval_detail(sha, when)
+    upsert_comment(gh, n, render_comment("approved" if is_red_pr else "green",
+                                         red, marked, sha, run_url, detail + note))
+    print(f"Approved {sha} for {OWNER_LOGIN}.")
+    return 0
+
+
+def cmd_revoke(gh, n, rules, run_url):
+    pr, red, marked, is_red_pr = classify(gh, n, rules)
+    if pr.get("state") != "open" or not is_red_pr:
+        return 0
+    sha = pr["head"]["sha"]
+    gh.set_status(sha, "pending", f"Approval withdrawn; waiting for {OWNER_LOGIN}", run_url)
+    if pr.get("auto_merge"):
+        try:
+            gh.set_auto_merge(pr["node_id"], False)
+        except ApiError as exc:
+            print(f"::warning::could not turn off auto-merge: {exc}")
+    upsert_comment(gh, n, render_comment("revoked", red, marked, sha, run_url))
+    print(f"Approval withdrawn for {sha}.")
+    return 0
+
+
+def cmd_classify(gh, n, rules):
+    _, red, marked, is_red_pr = classify(gh, n, rules)
+    print(f"red={'true' if is_red_pr else 'false'} ({len(red)} red path(s); marked [RED]: {marked})")
+    out = os.environ.get("GITHUB_OUTPUT")
+    if out:
+        with open(out, "a", encoding="utf-8") as fh:
+            fh.write(f"red={'true' if is_red_pr else 'false'}\n")
+    return 0
+
+
+def main(argv=None, gh=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    command = argv[0] if argv else "gate"
+    env = os.environ
+    try:
+        if not CODEOWNERS.is_file():
+            print("::error::.github/CODEOWNERS missing on base branch; failing closed")
+            return 1
+        rules = parse_codeowners(CODEOWNERS.read_text(encoding="utf-8"))
+        gh = gh or GitHub(env["REPO"], env["GITHUB_TOKEN"])
+        n, run_url = env["PR_NUMBER"], env.get("RUN_URL", "")
+        if command == "gate":
+            return cmd_gate(gh, n, rules, env.get("EVENT_ACTION", ""), run_url)
+        if command == "approve":
+            return cmd_approve(gh, n, rules, run_url, env.get("SENDER_LOGIN", ""),
+                               env.get("SENDER_ID", ""), env.get("EVENT_HEAD_SHA", ""))
+        if command == "revoke":
+            return cmd_revoke(gh, n, rules, run_url)
+        if command == "classify":
+            return cmd_classify(gh, n, rules)
+        print(f"::error::unknown command {command!r}")
+        return 1
+    except (ApiError, KeyError) as exc:
+        print(f"::error::owner-approval gate error: {exc}")
+        return 1
 
 
 if __name__ == "__main__":
