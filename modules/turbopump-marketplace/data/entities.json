@@ -35,8 +35,10 @@
       "capability": "Laser powder bed fusion machines; printed titanium pump components and trained the team in design for additive manufacturing",
       "evidence_grade": "reported",
       "citability": "AS",
-      "sources": [],
-      "source_note": "Public citation held in the maintainer's private record.",
+      "sources": [
+        "https://www.additivemanufacturing.media/suppliers/eos-north-america"
+      ],
+      "source_note": "Capability cited publicly; the programme relationship is cited in the maintainer's private record.",
       "as_of": "2026-10-08",
       "synthetic": false
     },
@@ -72,8 +74,10 @@
       "capability": "AxSTREAM turbomachinery design and rotor-dynamics software and training",
       "evidence_grade": "confirmed",
       "citability": "P",
-      "sources": [],
-      "source_note": "Public citation held in the maintainer's private record.",
+      "sources": [
+        "https://www.softinway.com/software/"
+      ],
+      "source_note": "Capability cited publicly; the programme relationship is cited in the maintainer's private record.",
       "as_of": "2026-10-08",
       "synthetic": false
     },
@@ -90,8 +94,10 @@
       "capability": "Bearings for a student-developed cryogenic turbopump (sponsor)",
       "evidence_grade": "confirmed",
       "citability": "P",
-      "sources": [],
-      "source_note": "Public citation held in the maintainer's private record.",
+      "sources": [
+        "https://www.theengineer.co.uk/content/product/cryogenic-bearings-smooth-way-to-greener-marine-power"
+      ],
+      "source_note": "Capability cited publicly; the programme relationship is cited in the maintainer's private record.",
       "as_of": "2026-10-08",
       "synthetic": false
     },
@@ -148,8 +154,10 @@
       "capability": "Federal launch-sector funding programme (Stream 1 and workforce stream awards)",
       "evidence_grade": "reported",
       "citability": "AS",
-      "sources": [],
-      "source_note": "Public citation held in the maintainer's private record.",
+      "sources": [
+        "https://www.canada.ca/en/department-national-defence/news/2026/03/minister-mcguinty-announces-strategic-investments-in-sovereign-space-launch.html"
+      ],
+      "source_note": "Contest and first-round awards cited publicly; stream-level detail is cited in the maintainer's private record.",
       "as_of": "2026-10-08",
       "synthetic": false
     },
