@@ -198,6 +198,24 @@ jobs:
             "result: subtype=\(($r.subtype // "none") | tostring | .[0:40] | @json) is_error=\(if ($r.is_error | type) == "boolean" then $r.is_error else "none" end) turns=\(($r.num_turns | numbers) // "none") cost_usd=\(($r.total_cost_usd | numbers) // "none") api_error_status=\(($r.api_error_status | numbers) // "none")"
           ' "$f" | tee -a "$GITHUB_STEP_SUMMARY"
           status=$(jq -r '[.[] | select(type == "object" and .type == "result")] | last | .api_error_status | numbers' "$f" 2>/dev/null || true)
+          # Only when the API rejected the run before Claude produced anything
+          # (at most one turn, no cost) is the error text from the API itself,
+          # not the model, so it is safe to show. Filtered to plain characters.
+          detail=$(jq -r '
+            def clean: tostring | gsub("[^A-Za-z0-9 .,;()/_-]"; " ") | gsub(" +"; " ") | .[0:240];
+            ([.[] | select(type == "object" and .type == "result")] | last // {}) as $r |
+            if ((($r.num_turns | numbers) // 99) <= 1) and ((($r.total_cost_usd | numbers) // 0) == 0) then
+              ([.[] | select(type == "object" and .type == "assistant") | .error | strings | clean]
+               + [.[] | select(type == "object" and .type == "assistant") | .message.content[]?
+                  | select(type == "object" and .type == "text") | .text | strings
+                  | select(startswith("API Error")) | clean]
+               + [($r.errors // [])[]? | clean]) | unique | .[0:4] | .[]
+            else empty end' "$f" 2>/dev/null || true)
+          first=""
+          if [ -n "$detail" ]; then
+            printf '%s\n' "$detail" | sed 's/^/api detail: /' | tee -a "$GITHUB_STEP_SUMMARY"
+            first=$(printf '%s\n' "$detail" | head -n 3 | tr '\n' ' ' | cut -c1-500)
+          fi
           case "$status" in
             401) msg="API key rejected (401): the ANTHROPIC_API_KEY secret is wrong, expired or revoked." ;;
             400|402) msg="Request rejected ($status): often no usable API credit on the key's organisation, or a setting the API does not accept." ;;
@@ -207,7 +225,7 @@ jobs:
             5[0-9][0-9]) msg="Anthropic API error ($status): re-run later." ;;
             *) msg="No API status recorded; see the init and result lines in the job summary." ;;
           esac
-          echo "::error::Review did not run: $msg"
+          echo "::error::Review did not run: $msg${first:+ API says: $first}"
           exit 1
 
       - name: Post summary and decide (fail closed)
