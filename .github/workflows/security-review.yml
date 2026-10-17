@@ -182,6 +182,37 @@ jobs:
             --disallowedTools "Bash,Glob,Grep,LS,Write,Edit,NotebookEdit,WebFetch,WebSearch,Read(./.git/**),Read(//proc/**),Read(//home/runner/work/_temp/**),Read(//home/runner/work/_actions/**)"
             --json-schema '{"type":"object","properties":{"findings":{"type":"array","items":{"type":"object","properties":{"severity":{"type":"string","enum":["HIGH","MEDIUM","LOW"]},"path":{"type":"string"},"line":{"type":"integer"},"title":{"type":"string"},"already_posted":{"type":"boolean"}},"required":["severity","path","line","title","already_posted"],"additionalProperties":false}},"reviewed_files":{"type":"array","items":{"type":"string"}},"summary":{"type":"string"}},"required":["findings","reviewed_files","summary"],"additionalProperties":false}'
 
+      - name: Explain a failed review run (codes only, fail closed)
+        if: failure() && steps.review.outcome == 'failure'
+        run: |
+          # The review action can hide the real cause behind "did not return
+          # structured_output". Its execution record holds the API result.
+          # Print only typed fields (numbers, booleans, a short subtype and
+          # model id), never free text, which could carry model output.
+          f="$RUNNER_TEMP/claude-execution-output.json"
+          if [ ! -s "$f" ]; then
+            echo "::error::The review left no execution record, so the cause is unknown."
+            exit 1
+          fi
+          jq -r '
+            ([.[] | select(type == "object" and .type == "system" and .subtype == "init")] | last // {}) as $i |
+            ([.[] | select(type == "object" and .type == "result")] | last // {}) as $r |
+            "init: model=\(($i.model // "none") | tostring | .[0:60] | @json) key_source=\(($i.apiKeySource // "none") | tostring | .[0:30] | @json)",
+            "result: subtype=\(($r.subtype // "none") | tostring | .[0:40] | @json) is_error=\(if ($r.is_error | type) == "boolean" then $r.is_error else "none" end) turns=\(($r.num_turns | numbers) // "none") cost_usd=\(($r.total_cost_usd | numbers) // "none") api_error_status=\(($r.api_error_status | numbers) // "none")"
+          ' "$f" | tee -a "$GITHUB_STEP_SUMMARY"
+          status=$(jq -r '[.[] | select(type == "object" and .type == "result")] | last | .api_error_status | numbers' "$f" 2>/dev/null || true)
+          case "$status" in
+            401) msg="API key rejected (401): the ANTHROPIC_API_KEY secret is wrong, expired or revoked." ;;
+            400|402) msg="Request rejected ($status): often no usable API credit on the key's organisation, or a setting the API does not accept." ;;
+            403) msg="Permission denied (403) for this key, workspace or model." ;;
+            404) msg="Not found (404): the model named in this workflow is not available to this key." ;;
+            429) msg="Rate or usage limit (429): re-run later." ;;
+            5[0-9][0-9]) msg="Anthropic API error ($status): re-run later." ;;
+            *) msg="No API status recorded; see the init and result lines in the job summary." ;;
+          esac
+          echo "::error::Review did not run: $msg"
+          exit 1
+
       - name: Post summary and decide (fail closed)
         env:
           RESULT: ${{ steps.review.outputs.structured_output }}
