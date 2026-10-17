@@ -31,7 +31,22 @@
 
 ## How was this tested / validated?
 
-<!-- Describe what you ran, checked, or reviewed -->
+<!-- Paste the commands you ran and their pass/fail lines. "Looks done" is not evidence. Never paste flagged content: this text is public. -->
+
+## Risk
+
+- [ ] Green: every changed path matches a CODEOWNERS line with no owner; merges on passing checks
+- [ ] Red: any changed path is owner-held, unlisted in CODEOWNERS, or under .github/; title carries the red prefix (see CLAUDE.md); waits for the owner
+
+<!-- One line: what could go wrong if this is mistaken, and who would notice. -->
+
+## How to revert
+
+<!-- One line, e.g. "Revert this pull request; no data or settings change." -->
+
+## Review findings
+
+- [ ] Every review finding is fixed or answered with a one-line reason (findings under rules 1–5 of REVIEW.md: fixed, or resolved by the owner only)
 
 ## Related issues
 

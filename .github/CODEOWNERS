@@ -13,6 +13,7 @@
 /.gitignore @TLS-sys
 /CLAUDE.md @TLS-sys
 **/CLAUDE.md @TLS-sys
+/REVIEW.md @TLS-sys
 /Agents/ @TLS-sys
 /scripts/ @TLS-sys
 
