@@ -214,5 +214,61 @@ class Collaborator(unittest.TestCase):
                 os.environ["CLAUDE_PROJECT_DIR"] = old
 
 
+class FailClosed(unittest.TestCase):
+    """The guard must block, never allow, when it cannot do its job."""
+
+    HERE = os.path.dirname(os.path.abspath(__file__))
+    ROOT = os.path.dirname(os.path.dirname(HERE))
+
+    def run_guard(self, stdin):
+        import subprocess
+        env = dict(os.environ, CLAUDE_PROJECT_DIR=self.ROOT)
+        return subprocess.run([sys.executable, os.path.join(self.HERE, "guard.py")],
+                              input=stdin, capture_output=True, text=True, env=env)
+
+    def test_unreadable_input_blocks(self):
+        self.assertEqual(self.run_guard("not json").returncode, 2)
+
+    def test_empty_input_blocks(self):
+        self.assertEqual(self.run_guard("").returncode, 2)
+
+    def test_non_object_input_blocks(self):
+        self.assertEqual(self.run_guard("[1, 2]").returncode, 2)
+
+    def test_malformed_inputs_block(self):
+        cases = [
+            '{}',
+            '{"tool_name": "Bash"}',
+            '{"tool_name": null, "tool_input": {}}',
+            '{"tool_name": "Bash", "tool_input": ["git", "push"]}',
+            '{"tool_name": "Bash", "tool_input": "git push"}',
+            '{"tool_name": "Bash", "tool_input": {"command": null}}',
+            "[" * 100000 + "]" * 100000,
+        ]
+        for case in cases:
+            with self.subTest(case=case[:60]):
+                self.assertEqual(self.run_guard(case).returncode, 2)
+
+    def test_readable_allowed_input_still_allows(self):
+        r = self.run_guard('{"tool_name": "Bash", "tool_input": {"command": "ls"}}')
+        self.assertEqual((r.returncode, r.stdout.strip()), (0, ""))
+
+    def test_settings_block_on_guard_failure(self):
+        import json
+        with open(os.path.join(self.ROOT, ".claude", "settings.json"), encoding="utf-8") as fh:
+            settings = json.load(fh)
+        guards = [h for entry in settings["hooks"]["PreToolUse"] for h in entry["hooks"]
+                  if "guard.py" in h.get("command", "")]
+        self.assertTrue(guards, "the guard must be registered as a PreToolUse hook")
+        for h in guards:
+            self.assertEqual(h.get("onFailure"), "block")
+        import re
+        matchers = [e.get("matcher", "") for e in settings["hooks"]["PreToolUse"]
+                    if any("guard.py" in h.get("command", "") for h in e["hooks"])]
+        for tool in ("Bash", "mcp__github__merge_pull_request", "mcp__github__push_files"):
+            with self.subTest(tool=tool):
+                self.assertTrue(any(re.fullmatch(m, tool) for m in matchers),
+                                f"the guard must run before {tool}")
+
 if __name__ == "__main__":
     unittest.main()

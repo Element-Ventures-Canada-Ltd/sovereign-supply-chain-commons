@@ -332,12 +332,31 @@ def decide(payload, ctx):
     return "allow", ""
 
 
+def _block(why):
+    print(f"Repo guard: {why}; blocked to be safe.", file=sys.stderr)
+    return 2
+
+
 def main():
+    # Fail closed. Anything the guard cannot read or check is blocked, never
+    # allowed: exit 2 is Claude Code's blocking signal for PreToolUse. The
+    # `"onFailure": "block"` setting in .claude/settings.json is a second layer
+    # for the cases this code cannot catch (python missing, a timeout).
     try:
         payload = json.load(sys.stdin)
-    except ValueError:
-        return 0
-    decision, reason = decide(payload, load_context())
+        if not isinstance(payload, dict):
+            return _block("unexpected hook input")
+        tool = payload.get("tool_name")
+        if not isinstance(tool, str) or not tool:
+            return _block("hook input names no tool")
+        inp = payload.get("tool_input")
+        if not isinstance(inp, dict):
+            return _block("unexpected tool input")
+        if tool == "Bash" and not isinstance(inp.get("command"), str):
+            return _block("shell call with no command to check")
+        decision, reason = decide(payload, load_context())
+    except Exception as exc:  # noqa: BLE001 - any failure, incl. RecursionError, must block
+        return _block(f"could not check this action ({type(exc).__name__})")
     if decision == "allow":
         return 0
     print(json.dumps({"hookSpecificOutput": {
