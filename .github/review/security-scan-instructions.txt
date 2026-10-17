@@ -1,0 +1,36 @@
+Handling: Unclassified — working
+
+**Repository context:**
+This is a public repository. Its main attack surface is GitHub Actions
+workflows, the Python guard scripts that police what may merge, and a static
+dashboard and tooling that process contributor-supplied data. Anyone can open
+an issue; pull requests from forks never auto-merge.
+
+**GitHub Actions workflows (.github/workflows/):**
+- pull_request_target or workflow_run workflows that check out, install, build
+  or run pull request code, or pass it secrets
+- Script injection: ${{ github.event.* }} values (titles, bodies, branch names,
+  labels, comments) placed directly in a run: block instead of passed through env
+- Actions not pinned to a full 40-character commit SHA
+- permissions broader than the job needs, or missing a top-level permissions block
+- persist-credentials left on where the job runs untrusted code
+- Secrets printed to logs, written to files or artifacts, or passed to steps
+  that run untrusted code
+- Changes that let a pull request alter the copy of a guard, gate or rule file
+  that judges it
+
+**Guards and gates (.github/scripts/, .claude/hooks/, Agents/):**
+- Logic that makes a guard pass when it should fail: early returns, broad
+  exception handling that swallows errors, allowlists widened, fail-open
+  defaults on missing input
+- Path traversal or symbolic links followed when reading pull request files
+- Identity or permission checks that compare login only, not numeric ID and permission
+- Restricted terms or secret values echoed in output
+
+**Data and rendering (Dashboard/, Survey/, Engagement/, modules/):**
+- Contributor data rendered into HTML without escaping (XSS)
+- Links accepted with schemes other than https
+- CSV export open to formula injection (cells starting with = + - @)
+- yaml.load without SafeLoader, eval, exec, pickle or subprocess with shell=True
+  on untrusted input
+- Outbound network calls added to tooling that processes contributor data
