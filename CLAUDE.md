@@ -178,6 +178,24 @@ never work around it.
 - **Plain language.** The owner is not a software engineer. In PR descriptions,
   explain what changed and why in plain words first, then the technical detail.
 
+## Review
+
+`REVIEW.md` says what a reviewer looks for here. Before and after opening a PR:
+
+- **Show evidence.** Run `/check`; paste the commands and their pass/fail
+  lines into the PR, never flagged content (PR text is public). If no check
+  covers the change, say so.
+- **Fresh-context review first.** Have a subagent review the diff against the
+  PR's stated goal and `REVIEW.md`; fix what affects correctness or the content
+  rules, not style.
+- **Answer every finding.** Fix it, or reply with a one-line reason; the
+  owner or reviewer resolves the thread. Findings under rules 1–5 of
+  `REVIEW.md` are closed only by a fix or by the owner.
+- **Three rounds, then stop.** If review still has open findings after three
+  fix rounds, stop pushing and summarise them for the owner.
+- **Fix repeats at the source.** A finding class seen on two PRs becomes a
+  proposed line in `REVIEW.md`, a test, or a guard.
+
 ## When to stop and ask
 
 Stop and ask the owner before: anything irreversible (deleting files or
