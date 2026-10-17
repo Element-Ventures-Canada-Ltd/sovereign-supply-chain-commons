@@ -29,7 +29,8 @@
 # - Only main is checked out; the pull request arrives as data files in
 #   .review-input/ through the API, never checked out or run.
 # - Forks are not reviewed and this check fails for them (never a silent
-#   skip); bot authors fail closed. Inline comments are posted by Claude
+#   skip) and merge only by the owner's ruleset bypass; bot authors fail
+#   closed. Inline comments are posted by Claude
 #   unfiltered (residual risk, same-repo changes only).
 # - Claude has no shell, no file writes, no access to pull request comments;
 #   it reads files inside the workspace only (not .git/), with no search
@@ -71,7 +72,7 @@ jobs:
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           if [ "$HEAD_REPO" != "$REPO" ]; then
-            echo "::error::Not reviewed: this pull request comes from a fork. Automated review does not run on forks, so this check fails and the owner reviews the change."
+            echo "::error::Not reviewed: this pull request comes from a fork. Automated review does not run on forks, so this check fails. The owner reviews the change and merges it only with the ruleset bypass."
             exit 1
           fi
           if [ "$AUTHOR_TYPE" = "Bot" ]; then
@@ -139,8 +140,8 @@ jobs:
             A separate reviewer handles bugs, style and content rules; report
             only security vulnerabilities.
 
-            Read, in this order, from the working directory (main, before this
-            change): CLAUDE.md (already loaded), .github/review/security-scan-instructions.txt
+            Read, in this order, from the working directory (current main,
+            which may include commits made after this pull request branched): CLAUDE.md (already loaded), .github/review/security-scan-instructions.txt
             (what to look for here) and .github/review/security-precedents.txt
             (what is intended and must not be reported). Follow them exactly.
 

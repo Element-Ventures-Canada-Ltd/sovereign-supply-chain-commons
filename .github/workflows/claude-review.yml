@@ -30,8 +30,10 @@
 #   untrusted data there, not part of the prompt). No pull request code is
 #   checked out, installed or run, and no CLAUDE.md from it is loaded.
 # - Pull requests from forks are not reviewed and this check fails for them
-#   (never a silent skip that looks like a pass); they never auto-merge and
-#   wait for the owner. Bot-authored pull requests fail closed the same way.
+#   (never a silent skip that looks like a pass). They never auto-merge: the
+#   owner reviews them and merges only with the ruleset bypass, because the
+#   owner-approved label does not clear a failed check. Bot-authored pull
+#   requests fail closed the same way.
 # - Claude has no shell, cannot write or edit files, and does not read pull
 #   request comments, so public commenters cannot reach it. It may read files
 #   inside the workspace only (not .git/), has no search tools, and may post
@@ -77,7 +79,7 @@ jobs:
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           if [ "$HEAD_REPO" != "$REPO" ]; then
-            echo "::error::Not reviewed: this pull request comes from a fork. Automated review does not run on forks, so this check fails and the owner reviews the change."
+            echo "::error::Not reviewed: this pull request comes from a fork. Automated review does not run on forks, so this check fails. The owner reviews the change and merges it only with the ruleset bypass."
             exit 1
           fi
           if [ "$AUTHOR_TYPE" = "Bot" ]; then
@@ -139,8 +141,9 @@ jobs:
 
             Your rules, in this order: CLAUDE.md (already loaded), then REVIEW.md
             in the working directory. Both come from main. Read REVIEW.md first
-            and follow it exactly. The working directory is main, before this
-            change.
+            and follow it exactly. The working directory is current main, which
+            may include commits made after this pull request branched; judge
+            the change by pr.diff.
 
             The pull request is in .review-input/: pr.json (title, description,
             counts), files.json (changed files), pr.diff (the full change) and
