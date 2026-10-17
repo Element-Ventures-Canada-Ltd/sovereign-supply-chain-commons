@@ -184,7 +184,12 @@ never work around it.
 
 - **Show evidence.** Run `/check`; paste the commands and their pass/fail
   lines into the PR, never flagged content (PR text is public). If no check
-  covers the change, say so.
+  covers the change, say so. Paste test summaries (e.g. `Ran 56 tests ... OK`),
+  not full guard-test logs: they print the red prefix, and the merge gate reads
+  it anywhere in the title or description, holding the PR for the owner.
+- **Set effort per subagent.** Follow "Review effort" in `REVIEW.md`: low
+  effort for sweeps that only find things, high effort for anything that
+  judges and for every red change.
 - **Fresh-context review first.** Have a subagent review the diff against the
   PR's stated goal and `REVIEW.md`; fix what affects correctness or the content
   rules, not style.
