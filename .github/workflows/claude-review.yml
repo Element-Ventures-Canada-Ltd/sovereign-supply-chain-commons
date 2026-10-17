@@ -12,7 +12,9 @@
 #   merge-gate fails. Each commit is reviewed again and every issue still in
 #   the code is counted, including ones posted on earlier commits, so a new
 #   commit clears a finding only by fixing it. For a false positive, the
-#   owner decides; the owner's bypass is the owner's alone.
+#   owner merges with the ruleset bypass ("bypass rules"); the owner-approved
+#   label does not clear a failed review. A re-run reviews against current
+#   main; re-run merge-gate afterwards, as it keeps its earlier result.
 # - Every finding is a review thread. With "Require conversation resolution
 #   before merging" on, an open thread also blocks the merge.
 # - The check fails closed when the review cannot run or cannot be trusted:
@@ -27,12 +29,15 @@
 #   data files in .review-input/ (its title, description and diff are
 #   untrusted data there, not part of the prompt). No pull request code is
 #   checked out, installed or run, and no CLAUDE.md from it is loaded.
-# - Pull requests from forks are skipped: they get no AI review and never
-#   auto-merge. Bot-authored pull requests fail closed and wait for the owner.
+# - Pull requests from forks are not reviewed and this check fails for them
+#   (never a silent skip that looks like a pass); they never auto-merge and
+#   wait for the owner. Bot-authored pull requests fail closed the same way.
 # - Claude has no shell, cannot write or edit files, and does not read pull
 #   request comments, so public commenters cannot reach it. It may read files
 #   inside the workspace only (not .git/), has no search tools, and may post
-#   inline comments on this pull request. It runs with the job's own short-lived token (contents
+#   inline comments on this pull request. Residual risk: inline comments are
+#   posted by Claude unfiltered, so a same-repo change could steer their text;
+#   forks never reach the reviewer. It runs with the job's own short-lived token (contents
 #   read, pull requests write), never an app token. Residual risk: that token
 #   sits in .git/config during the run, behind a read-deny rule.
 # - Actions are pinned to full commit SHAs; the review action to a release
@@ -53,9 +58,7 @@ concurrency:
 jobs:
   review:
     name: Claude code review
-    if: >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -71,7 +74,12 @@ jobs:
         env:
           KEY_SET: ${{ secrets.ANTHROPIC_API_KEY != '' }}
           AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
+          if [ "$HEAD_REPO" != "$REPO" ]; then
+            echo "::error::Not reviewed: this pull request comes from a fork. Automated review does not run on forks, so this check fails and the owner reviews the change."
+            exit 1
+          fi
           if [ "$AUTHOR_TYPE" = "Bot" ]; then
             echo "::error::Bot-authored pull request: automated review does not run, so this check fails closed. The owner reviews it."
             exit 1
@@ -84,7 +92,7 @@ jobs:
       - name: Checkout main (never the pull request)
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: main
           fetch-depth: 1
           persist-credentials: false
 
@@ -165,7 +173,7 @@ jobs:
             --model claude-opus-5-5
             --max-turns 60
             --allowedTools "Read(./**),mcp__github_inline_comment__create_inline_comment"
-            --disallowedTools "Bash,Write,Edit,NotebookEdit,WebFetch,WebSearch,Read(./.git/**),Read(//proc/**),Read(//home/runner/work/_temp/**),Read(//home/runner/work/_actions/**)"
+            --disallowedTools "Bash,Glob,Grep,LS,Write,Edit,NotebookEdit,WebFetch,WebSearch,Read(./.git/**),Read(//proc/**),Read(//home/runner/work/_temp/**),Read(//home/runner/work/_actions/**)"
             --json-schema '{"type":"object","properties":{"findings":{"type":"array","items":{"type":"object","properties":{"tag":{"type":"string","enum":["Important","Nit","Pre-existing"]},"path":{"type":"string"},"line":{"type":"integer"},"title":{"type":"string"},"already_posted":{"type":"boolean"}},"required":["tag","path","line","title","already_posted"],"additionalProperties":false}},"reviewed_files":{"type":"array","items":{"type":"string"}},"summary":{"type":"string"}},"required":["findings","reviewed_files","summary"],"additionalProperties":false}'
 
       - name: Post summary and decide (fail closed)
@@ -183,7 +191,7 @@ jobs:
           fi
           printf '%s' "$RESULT" > "$RUNNER_TEMP/result.json"
           missing=$(jq -r --slurpfile r "$RUNNER_TEMP/result.json" \
-            '[.[].filename] - ($r[0].reviewed_files | map(ltrimstr("./"))) | .[]' "$in/files.json")
+            '[.[].filename] - ($r[0].reviewed_files | map(ltrimstr("./"))) | .[] | @json' "$in/files.json")
           if [ -n "$missing" ]; then
             echo "::error::The review did not cover every changed file, so this check fails closed. Missing:"
             printf '%s\n' "$missing"
@@ -207,6 +215,6 @@ jobs:
           gh pr comment "$PR" --repo "$REPO" --body-file "$RUNNER_TEMP/summary.md"
           echo "$head" >> "$GITHUB_STEP_SUMMARY"
           if [ "$imp" -gt 0 ]; then
-            echo "::error::$imp Important finding(s) still in the code. Fix them with a new commit, or the owner decides."
+            echo "::error::$imp Important finding(s) still in the code. Fix them with a new commit. For a false positive, the owner merges with the ruleset bypass; the owner-approved label alone does not clear this check."
             exit 1
           fi
