@@ -17,7 +17,10 @@
 #   its earlier result); or merges with the ruleset bypass. The owner-approved
 #   label does not clear a failed review.
 # - MEDIUM and LOW findings are review threads. With "Require conversation
-#   resolution before merging" on, an open thread blocks the merge.
+#   resolution before merging" on, an open thread blocks the merge. After a
+#   passing run, this workflow resolves its own threads in files where it now
+#   reports no finding (.github/scripts/resolve_review_threads.py). Threads in
+#   files with any finding left, and threads people start, stay for the owner.
 # - The check fails closed when the review cannot run or cannot be trusted:
 #   missing API key or review files, bot author, diff over 300 KB or with a
 #   line over 1,000 characters, a changed file not covered, no valid result.
@@ -273,3 +276,13 @@ jobs:
             echo "::error::$high HIGH security finding(s) still in the code. Fix them with a new commit. For a false positive, the owner merges with the ruleset bypass; the owner-approved label alone does not clear this check."
             exit 1
           fi
+
+      - name: Resolve this review's own threads whose finding is gone
+        # Runs only after a passing review. Clears this reviewer's own threads
+        # in files where it now reports no finding of any level. Never touches
+        # people's threads or the other reviewer's. Never changes the result.
+        if: success()
+        continue-on-error: true
+        run: |
+          python3 -I .github/scripts/resolve_review_threads.py \
+            --reviewer security --result "$RUNNER_TEMP/result.json" --repo "$REPO" --pr "$PR"
