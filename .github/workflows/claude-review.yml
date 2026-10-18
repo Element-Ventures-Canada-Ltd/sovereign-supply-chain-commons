@@ -16,7 +16,11 @@
 #   label does not clear a failed review. A re-run reviews against current
 #   main; re-run merge-gate afterwards, as it keeps its earlier result.
 # - Every finding is a review thread. With "Require conversation resolution
-#   before merging" on, an open thread also blocks the merge.
+#   before merging" on, an open thread also blocks the merge. After a passing
+#   run, this workflow resolves only its own Nit threads (rules 6-7) that
+#   GitHub marks outdated, in files where it now reports no finding
+#   (.github/scripts/resolve_review_threads.py). Important, Pre-existing,
+#   rule 1-5, security and people's threads always stay for the owner.
 # - The check fails closed when the review cannot run or cannot be trusted:
 #   missing API key, bot author, diff over 300 KB or with a line over 1,000
 #   characters, a changed file the review did not cover, no valid result.
@@ -270,3 +274,15 @@ jobs:
             echo "::error::$imp Important finding(s) still in the code. Fix them with a new commit. For a false positive, the owner merges with the ruleset bypass; the owner-approved label alone does not clear this check."
             exit 1
           fi
+
+      - name: Resolve this review's own outdated Nit threads
+        # Runs only after a passing review. Resolves a thread only if it is
+        # this reviewer's Nit outside rules 1-5, GitHub marks it outdated (the
+        # line changed) and the file has no finding left. Resolves nothing if
+        # any finding path is not a changed file. Never changes the result.
+        if: success()
+        continue-on-error: true
+        run: |
+          python3 -I .github/scripts/resolve_review_threads.py \
+            --result "$RUNNER_TEMP/result.json" --files .review-input/files.json \
+            --repo "$REPO" --pr "$PR"
