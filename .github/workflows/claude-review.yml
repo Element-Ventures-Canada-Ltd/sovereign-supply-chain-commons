@@ -17,9 +17,10 @@
 #   main; re-run merge-gate afterwards, as it keeps its earlier result.
 # - Every finding is a review thread. With "Require conversation resolution
 #   before merging" on, an open thread also blocks the merge. After a passing
-#   run, this workflow resolves its own threads in files where it now reports
-#   no finding (.github/scripts/resolve_review_threads.py). Threads in files
-#   with any finding left, and threads people start, stay for the owner.
+#   run, this workflow resolves only its own Nit threads (rules 6-7) that
+#   GitHub marks outdated, in files where it now reports no finding
+#   (.github/scripts/resolve_review_threads.py). Important, Pre-existing,
+#   rule 1-5, security and people's threads always stay for the owner.
 # - The check fails closed when the review cannot run or cannot be trusted:
 #   missing API key, bot author, diff over 300 KB or with a line over 1,000
 #   characters, a changed file the review did not cover, no valid result.
@@ -274,12 +275,14 @@ jobs:
             exit 1
           fi
 
-      - name: Resolve this review's own threads whose finding is gone
-        # Runs only after a passing review. Clears this reviewer's own threads
-        # in files where it now reports no finding of any level. Never touches
-        # people's threads or the other reviewer's. Never changes the result.
+      - name: Resolve this review's own outdated Nit threads
+        # Runs only after a passing review. Resolves a thread only if it is
+        # this reviewer's Nit outside rules 1-5, GitHub marks it outdated (the
+        # line changed) and the file has no finding left. Resolves nothing if
+        # any finding path is not a changed file. Never changes the result.
         if: success()
         continue-on-error: true
         run: |
           python3 -I .github/scripts/resolve_review_threads.py \
-            --reviewer code --result "$RUNNER_TEMP/result.json" --repo "$REPO" --pr "$PR"
+            --result "$RUNNER_TEMP/result.json" --files .review-input/files.json \
+            --repo "$REPO" --pr "$PR"
