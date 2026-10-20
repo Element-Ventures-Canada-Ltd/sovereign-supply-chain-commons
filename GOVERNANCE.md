@@ -5,8 +5,8 @@ Handling: Unclassified — working
 
 # Governance
 
-This project is the open tier of a platform owned by Element Ventures (Canada)
-Ltd. ("EV"). It is run as a steward-led consortium: EV stewards the project and
+This project is the open tier of a platform maintained by Element Ventures
+(Canada) Ltd. ("EV"), exclusive licensee of the project's background IP. It is run as a steward-led consortium: EV stewards the project and
 holds the inbound licence to contributions, and a Technical Steering Committee
 ("TSC") brings contributors, academics, and industry into planning. The
 consortium is a collaboration framework. It is not a legal entity, partnership,

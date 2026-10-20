@@ -6,7 +6,8 @@ Handling: Unclassified — working
 # Corporate Contributor License Agreement — Open Tier
 
 For organizations whose employees or contractors contribute to this repository
-(the "Project"), owned by Element Ventures (Canada) Ltd. ("EV").
+(the "Project"), maintained by Element Ventures (Canada) Ltd. ("EV"), exclusive
+licensee of the Project's background IP.
 
 ## 1. Grant
 
