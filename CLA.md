@@ -6,8 +6,8 @@ Handling: Unclassified — working
 # Individual Contributor License Agreement — Open Tier
 
 This Agreement applies to contributions to this repository (the "Project"),
-which is the open tier of a platform owned by Element Ventures (Canada) Ltd.
-("EV"). EV's proprietary components are maintained separately and do not accept
+which is the open tier of a platform maintained by Element Ventures (Canada)
+Ltd. ("EV"), exclusive licensee of the Project's background IP. EV's proprietary components are maintained separately and do not accept
 contributions under this Agreement.
 
 ## 1. Definitions
